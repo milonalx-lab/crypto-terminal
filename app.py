@@ -101,8 +101,8 @@ def charger_donnees_prix(symbole, intervalle="1d", limite=200):
     symbole ici = coingecko_id (ex: 'bitcoin', 'ethereum')
     """
     try:
-        # CoinGecko OHLC : jours selon limite (max 365 pour daily)
-        jours = min(limite, 365)
+        # CoinGecko OHLC : valeurs acceptées = 1,7,14,30,90,180,365
+        jours = 365
         url = f"https://api.coingecko.com/api/v3/coins/{symbole}/ohlc?vs_currency=usd&days={jours}"
         reponse = requests.get(url, timeout=15)
         reponse.raise_for_status()
