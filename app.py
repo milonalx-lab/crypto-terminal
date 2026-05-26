@@ -130,31 +130,34 @@ def charger_donnees_prix(symbole, intervalle="1d", limite=200):
         return pd.DataFrame()
 
 
-@st.cache_data(ttl=30)
+@st.cache_data(ttl=60)
 def charger_metrics_derives(symbole):
-    """Funding Rate + Open Interest depuis Binance Futures."""
-    funding, oi = 0.0, 0.0
+    """Funding Rate + Open Interest (USD) depuis Bybit (non géo-bloqué)."""
+    funding, oi_usd = 0.0, 0.0
     try:
-        rep_f = requests.get(f"https://fapi.binance.com/fapi/v1/premiumIndex?symbol={symbole}", timeout=5).json()
-        funding = float(rep_f.get('lastFundingRate', 0)) * 100
+        url = f"https://api.bybit.com/v5/market/tickers?category=linear&symbol={symbole}"
+        rep = requests.get(url, timeout=8).json()
+        liste = rep.get('result', {}).get('list', [])
+        if liste:
+            t = liste[0]
+            funding = float(t.get('fundingRate', 0)) * 100  # en %
+            oi_usd = float(t.get('openInterestValue', 0))   # déjà en USD
     except Exception:
         pass
-    try:
-        rep_oi = requests.get(f"https://fapi.binance.com/fapi/v1/openInterest?symbol={symbole}", timeout=5).json()
-        oi = float(rep_oi.get('openInterest', 0))
-    except Exception:
-        pass
-    return funding, oi
+    return funding, oi_usd
 
 
 @st.cache_data(ttl=300)
 def charger_long_short_ratio(symbole):
-    """Ratio Long/Short des top traders Binance."""
+    """Ratio Long/Short des comptes Bybit."""
     try:
-        url = f"https://fapi.binance.com/futures/data/topLongShortAccountRatio?symbol={symbole}&period=1h&limit=1"
-        rep = requests.get(url, timeout=5).json()
-        if rep:
-            return float(rep[0].get('longShortRatio', 1.0))
+        url = f"https://api.bybit.com/v5/market/account-ratio?category=linear&symbol={symbole}&period=1h&limit=1"
+        rep = requests.get(url, timeout=8).json()
+        liste = rep.get('result', {}).get('list', [])
+        if liste:
+            buy = float(liste[0].get('buyRatio', 0.5))
+            sell = float(liste[0].get('sellRatio', 0.5))
+            return buy / sell if sell > 0 else 1.0
     except Exception:
         pass
     return 1.0
@@ -162,15 +165,17 @@ def charger_long_short_ratio(symbole):
 
 @st.cache_data(ttl=300)
 def charger_liquidations_proxy(symbole):
-    """Proxy des liquidations via variation soudaine de l'OI sur 24h (historique OI)."""
+    """Variation de l'Open Interest sur 24h via Bybit (proxy de purge)."""
     try:
-        url = f"https://fapi.binance.com/futures/data/openInterestHist?symbol={symbole}&period=1h&limit=24"
-        rep = requests.get(url, timeout=5).json()
-        if rep and len(rep) >= 2:
-            oi_debut = float(rep[0]['sumOpenInterest'])
-            oi_fin = float(rep[-1]['sumOpenInterest'])
-            variation_pct = ((oi_fin - oi_debut) / oi_debut) * 100 if oi_debut > 0 else 0
-            return variation_pct
+        url = f"https://api.bybit.com/v5/market/open-interest?category=linear&symbol={symbole}&intervalTime=1h&limit=24"
+        rep = requests.get(url, timeout=8).json()
+        liste = rep.get('result', {}).get('list', [])
+        if liste and len(liste) >= 2:
+            # Bybit renvoie du plus récent au plus ancien
+            oi_recent = float(liste[0]['openInterest'])
+            oi_ancien = float(liste[-1]['openInterest'])
+            if oi_ancien > 0:
+                return ((oi_recent - oi_ancien) / oi_ancien) * 100
     except Exception:
         pass
     return 0.0
@@ -178,28 +183,41 @@ def charger_liquidations_proxy(symbole):
 
 @st.cache_data(ttl=600)
 def charger_donnees_coingecko(coin_id):
-    """Données globales CoinGecko : market cap, supply, ATH, variation."""
-    try:
-        url = f"https://api.coingecko.com/api/v3/coins/{coin_id}?localization=false&tickers=false&community_data=false&developer_data=false"
-        rep = requests.get(url, timeout=10).json()
-        market = rep.get('market_data', {})
-        return {
-            "market_cap": market.get('market_cap', {}).get('usd', 0),
-            "total_volume_24h": market.get('total_volume', {}).get('usd', 0),
-            "circulating_supply": market.get('circulating_supply', 0),
-            "total_supply": market.get('total_supply', 0),
-            "max_supply": market.get('max_supply', None),
-            "ath": market.get('ath', {}).get('usd', 0),
-            "ath_date": market.get('ath_date', {}).get('usd', ''),
-            "ath_change_pct": market.get('ath_change_percentage', {}).get('usd', 0),
-            "price_change_24h_pct": market.get('price_change_percentage_24h', 0),
-            "price_change_7d_pct": market.get('price_change_percentage_7d', 0),
-            "price_change_30d_pct": market.get('price_change_percentage_30d', 0),
-            "price_change_1y_pct": market.get('price_change_percentage_1y', 0),
-            "fully_diluted_valuation": market.get('fully_diluted_valuation', {}).get('usd', 0),
-        }
-    except Exception:
-        return {}
+    """Données fondamentales via /coins/markets (endpoint léger) avec retry."""
+    url = ("https://api.coingecko.com/api/v3/coins/markets"
+           f"?vs_currency=usd&ids={coin_id}"
+           "&price_change_percentage=24h,7d,30d,1y")
+    for tentative in range(3):
+        try:
+            rep = requests.get(url, timeout=12)
+            if rep.status_code == 429:  # rate-limit → on attend et on réessaie
+                import time
+                time.sleep(2 * (tentative + 1))
+                continue
+            rep.raise_for_status()
+            data = rep.json()
+            if not data:
+                return {}
+            m = data[0]
+            return {
+                "market_cap": m.get('market_cap', 0) or 0,
+                "total_volume_24h": m.get('total_volume', 0) or 0,
+                "circulating_supply": m.get('circulating_supply', 0) or 0,
+                "total_supply": m.get('total_supply', 0) or 0,
+                "max_supply": m.get('max_supply', None),
+                "ath": m.get('ath', 0) or 0,
+                "ath_date": m.get('ath_date', ''),
+                "ath_change_pct": m.get('ath_change_percentage', 0) or 0,
+                "price_change_24h_pct": m.get('price_change_percentage_24h_in_currency', 0) or 0,
+                "price_change_7d_pct": m.get('price_change_percentage_7d_in_currency', 0) or 0,
+                "price_change_30d_pct": m.get('price_change_percentage_30d_in_currency', 0) or 0,
+                "price_change_1y_pct": m.get('price_change_percentage_1y_in_currency', 0) or 0,
+                "fully_diluted_valuation": m.get('fully_diluted_valuation', 0) or 0,
+            }
+        except Exception:
+            import time
+            time.sleep(1)
+    return {}
 
 
 @st.cache_data(ttl=600)
@@ -233,6 +251,24 @@ def charger_fear_and_greed():
         return 50, "Neutre", []
 
 
+@st.cache_data(ttl=86400)
+def traduire_fr(texte):
+    """Traduit un texte EN→FR via l'endpoint public Google Translate. Fallback : texte original."""
+    if not texte or not texte.strip():
+        return texte
+    try:
+        url = "https://translate.googleapis.com/translate_a/single"
+        params = {"client": "gtx", "sl": "en", "tl": "fr", "dt": "t", "q": texte[:1500]}
+        rep = requests.get(url, params=params, timeout=8)
+        if rep.status_code == 200:
+            data = rep.json()
+            # data[0] = liste de segments traduits
+            return "".join(seg[0] for seg in data[0] if seg[0])
+    except Exception:
+        pass
+    return texte
+
+
 @st.cache_data(ttl=300)
 def charger_actualites(ticker, coingecko_id):
     """Actualités multi-sources : CryptoCompare → CoinPaprika → CoinGecko trending."""
@@ -246,9 +282,11 @@ def charger_actualites(ticker, coingecko_id):
         if reponse.status_code == 200:
             data = reponse.json().get('Data', [])
             for art in data[:6]:
+                titre_en = art.get('title', '')
+                corps_en = art.get('body', '')
                 articles.append({
-                    "title": art.get('title', ''),
-                    "body": art.get('body', ''),
+                    "title": traduire_fr(titre_en),
+                    "body": traduire_fr(corps_en[:400]),
                     "url": art.get('url', ''),
                     "source": art.get('source', 'CryptoCompare'),
                     "date": datetime.fromtimestamp(art.get('published_on', 0)).strftime('%d/%m/%Y %H:%M') if art.get('published_on') else '',
@@ -566,7 +604,7 @@ df = charger_donnees_prix(fiche['coingecko_id'])
 if df.empty:
     st.stop()
 
-funding, open_interest = charger_metrics_derives(symbole_api)
+funding, open_interest_usd = charger_metrics_derives(symbole_api)
 ls_ratio = charger_long_short_ratio(symbole_api)
 oi_var_24h = charger_liquidations_proxy(symbole_api)
 fng_valeur, fng_statut, fng_historique = charger_fear_and_greed()
@@ -578,9 +616,7 @@ df = appliquer_analyse_technique(df)
 infos = df.iloc[-1]
 prix = infos['Close']
 
-# Correction OI avec multiplicateur de contrat
-contract_mult = fiche.get('contract_mult', 1)
-open_interest_usd = open_interest * contract_mult * prix
+# Open Interest déjà en USD via Bybit (openInterestValue)
 
 # Supports / Résistances
 liste_supports, liste_resistances = detecter_supports_resistances(df)
@@ -641,18 +677,24 @@ st.markdown(f"# 💰 {choix.split()[0]} : **{prix:,.2f} USD**")
 # ── Métriques principales ──
 c1, c2, c3, c4, c5, c6 = st.columns(6)
 c1.metric("Prix", f"{prix:,.2f} $",
-          delta=f"{cg_data.get('price_change_24h_pct', 0):.1f}% (24h)" if cg_data else None)
-c2.metric("RSI (14j)", f"{infos['RSI']:.1f}")
+          delta=f"{cg_data.get('price_change_24h_pct', 0):.1f}% (24h)" if cg_data else None,
+          help="Prix actuel et variation sur 24h. La couleur du delta indique la tendance journalière.")
+c2.metric("RSI (14j)", f"{infos['RSI']:.1f}",
+          help="Force relative 0–100. <30 = survendu (rebond possible, signal d'achat). >70 = suracheté (correction possible). Entre 40–60 = neutre.")
 c3.metric("MACD Hist", f"{infos['MACD_Hist']:.2f}",
           delta="Haussier" if infos['MACD_Hist'] > 0 else "Baissier",
-          delta_color="normal" if infos['MACD_Hist'] > 0 else "inverse")
-c4.metric("ATR (volatilité)", f"{infos['ATR']:.2f} ({infos['ATR_Pct']:.1f}%)")
+          delta_color="normal" if infos['MACD_Hist'] > 0 else "inverse",
+          help="Histogramme MACD. Positif et croissant = momentum haussier qui s'accélère. Passage de négatif à positif = signal d'achat fort.")
+c4.metric("ATR (volatilité)", f"{infos['ATR']:.2f} ({infos['ATR_Pct']:.1f}%)",
+          help="Amplitude moyenne des bougies. Plus l'ATR% est élevé, plus l'actif bouge fort → place ton stop loss plus large pour éviter d'être sorti par le bruit.")
 c5.metric("Funding Rate", f"{funding:.4f}%",
-          delta="Surchauffe" if funding > 0.05 else "Sain",
-          delta_color="inverse" if funding > 0.05 else "normal")
+          delta="Surchauffe" if funding > 0.05 else ("Shorts paient" if funding < -0.01 else "Sain"),
+          delta_color="inverse" if funding > 0.05 else "normal",
+          help="Coût payé toutes les 8h entre traders à effet de levier. >0.05% = trop d'acheteurs euphoriques (risque de purge baissière). Négatif = shorts dominants (rebond possible).")
 c6.metric("ADX (force tendance)", f"{infos['ADX']:.1f}",
           delta="Tendance forte" if infos['ADX'] > 25 else "Range",
-          delta_color="normal" if infos['ADX'] > 25 else "off")
+          delta_color="normal" if infos['ADX'] > 25 else "off",
+          help="Force de la tendance (pas la direction). >25 = tendance marquée, les signaux de suivi sont fiables. <20 = marché sans direction (range), privilégie les rebonds entre supports/résistances.")
 
 # ── Signal de confluence ──
 st.markdown("---")
@@ -845,15 +887,19 @@ st.markdown("---")
 st.header("⚡ Marché des Dérivés")
 
 d1, d2, d3, d4 = st.columns(4)
-d1.metric("Open Interest", f"{open_interest_usd:,.0f} $")
+d1.metric("Open Interest", f"{open_interest_usd:,.0f} $" if open_interest_usd > 0 else "N/A",
+          help="Montant total engagé sur les contrats à terme (Bybit). En hausse = nouveaux capitaux entrent. Chute brutale = liquidations/débouclage de positions.")
 d2.metric("Funding Rate (8h)", f"{funding:.4f}%",
           delta="Surchauffe leviers" if funding > 0.05 else ("Shorts paient" if funding < -0.01 else "Neutre"),
-          delta_color="inverse" if funding > 0.05 else "normal")
-d3.metric("Long/Short Ratio (Top Traders)", f"{ls_ratio:.2f}",
-          delta="Majorité Long" if ls_ratio > 1.2 else ("Majorité Short" if ls_ratio < 0.85 else "Équilibré"))
+          delta_color="inverse" if funding > 0.05 else "normal",
+          help="Coût du levier toutes les 8h. >0.05% = excès d'acheteurs (malus de −1 sur le score). <−0.01% = shorts en souffrance → carburant pour un rebond.")
+d3.metric("Ratio Long/Short", f"{ls_ratio:.2f}",
+          delta="Majorité Long" if ls_ratio > 1.2 else ("Majorité Short" if ls_ratio < 0.85 else "Équilibré"),
+          help="Comptes en position longue ÷ comptes en position courte (Bybit). <0.85 = beaucoup de shorts → un short squeeze peut propulser le prix. >1.2 = excès d'optimisme, risque de correction.")
 d4.metric("Δ OI 24h", f"{oi_var_24h:+.1f}%",
           delta="Flush récent" if oi_var_24h < -5 else ("Buildup" if oi_var_24h > 5 else "Stable"),
-          delta_color="normal" if oi_var_24h < -5 else ("inverse" if oi_var_24h > 5 else "off"))
+          delta_color="normal" if oi_var_24h < -5 else ("inverse" if oi_var_24h > 5 else "off"),
+          help="Variation de l'Open Interest sur 24h. < −5% = liquidations massives déjà passées (le nettoyage est fait, plancher possible). > +5% = accumulation de levier (risque accru).")
 
 with st.expander("📖 Lecture des dérivés"):
     st.markdown("""
@@ -873,14 +919,24 @@ st.header("🌐 Contexte Macro & Marché Global")
 
 m1, m2, m3, m4, m5 = st.columns(5)
 m1.metric("Fear & Greed", f"{fng_valeur}/100", delta=fng_statut,
-          delta_color="inverse" if fng_valeur < 30 else ("normal" if fng_valeur > 70 else "off"))
+          delta_color="inverse" if fng_valeur < 30 else ("normal" if fng_valeur > 70 else "off"),
+          help="Indice de sentiment 0–100. <25 = peur extrême (historiquement de bons points d'achat). >75 = avidité extrême (prudence, sommet possible). Contrarian : on achète dans la peur.")
 
-if global_data:
-    m2.metric("BTC Dominance", f"{global_data.get('btc_dominance', 0):.1f}%")
-    m3.metric("Market Cap Total", f"${global_data.get('total_market_cap', 0)/1e12:.2f}T",
-              delta=f"{global_data.get('market_cap_change_24h_pct', 0):.1f}% (24h)")
-    m4.metric("Volume Global 24h", f"${global_data.get('total_volume_24h', 0)/1e9:.0f}B")
-    m5.metric("ETH Dominance", f"{global_data.get('eth_dominance', 0):.1f}%")
+if global_data and global_data.get('btc_dominance', 0) > 0:
+    m2.metric("Dominance BTC", f"{global_data.get('btc_dominance', 0):.1f}%",
+              help="Part du BTC dans la capitalisation crypto totale. En hausse = capitaux qui fuient les altcoins vers le BTC (défavorable aux alts). En baisse = potentielle 'alt-season'.")
+    m3.metric("Cap. Marché Totale", f"${global_data.get('total_market_cap', 0)/1e12:.2f}T",
+              delta=f"{global_data.get('market_cap_change_24h_pct', 0):.1f}% (24h)",
+              help="Capitalisation de tout le marché crypto. Sa tendance globale donne le climat : marché haussier (risk-on) ou baissier (risk-off).")
+    m4.metric("Volume Global 24h", f"${global_data.get('total_volume_24h', 0)/1e9:.0f}B",
+              help="Volume total échangé sur 24h, tous actifs confondus. Un volume en hausse confirme la conviction derrière un mouvement de marché.")
+    m5.metric("Dominance ETH", f"{global_data.get('eth_dominance', 0):.1f}%",
+              help="Part de l'Ethereum dans la capitalisation totale. Une hausse signale souvent un appétit pour la DeFi et les altcoins de qualité.")
+else:
+    m2.metric("Dominance BTC", "N/A")
+    m3.metric("Cap. Marché Totale", "N/A")
+    m4.metric("Volume Global 24h", "N/A")
+    m5.metric("Dominance ETH", "N/A")
 
 # Historique Fear & Greed (mini-graphique)
 if fng_historique:
@@ -913,29 +969,38 @@ with st.expander("📖 Grille de lecture macro"):
 st.markdown("---")
 st.header(f"📋 Fiche Fondamentale — {choix}")
 
+def fmt_milliards(v):
+    return f"${v/1e9:.1f}B" if v and v > 0 else "N/A"
+
 # Données CoinGecko
-if cg_data:
+if cg_data and cg_data.get('market_cap', 0) > 0:
     fg1, fg2, fg3, fg4 = st.columns(4)
-    fg1.metric("Market Cap", f"${cg_data.get('market_cap', 0)/1e9:.1f}B")
-    fg2.metric("Volume 24h", f"${cg_data.get('total_volume_24h', 0)/1e9:.1f}B")
+    fg1.metric("Market Cap", fmt_milliards(cg_data.get('market_cap', 0)),
+               help="Capitalisation totale = prix × offre en circulation. Mesure la taille de l'actif. >100B = large cap (BTC, ETH), <1B = small cap plus volatil.")
+    fg2.metric("Volume 24h", fmt_milliards(cg_data.get('total_volume_24h', 0)),
+               help="Montant échangé sur 24h. Un volume élevé = forte liquidité et intérêt. Un ratio Volume/MarketCap élevé peut signaler un mouvement imminent.")
 
     max_s = cg_data.get('max_supply')
     circ_s = cg_data.get('circulating_supply', 0)
     if max_s and max_s > 0:
-        fg3.metric("Supply Circulante", f"{circ_s/max_s*100:.1f}% du max")
+        fg3.metric("Offre en circulation", f"{circ_s/max_s*100:.1f}% du max",
+                   help="Part de l'offre maximale déjà émise. Proche de 100% = peu d'inflation future (ex: BTC). Faible = risque de dilution par émission de nouveaux jetons.")
     else:
-        fg3.metric("Supply Circulante", f"{circ_s:,.0f}")
+        fg3.metric("Offre en circulation", f"{circ_s:,.0f}" if circ_s else "N/A",
+                   help="Nombre de jetons actuellement en circulation. Sans offre maximale, l'actif peut être inflationniste.")
 
-    fg4.metric("Distance ATH", f"{cg_data.get('ath_change_pct', 0):.1f}%",
-               delta=f"ATH: {cg_data.get('ath', 0):,.2f}$")
+    fg4.metric("Distance à l'ATH", f"{cg_data.get('ath_change_pct', 0):.1f}%",
+               delta=f"ATH: {cg_data.get('ath', 0):,.2f}$",
+               help="Écart par rapport au plus haut historique (All-Time High). −80% = l'actif a perdu 80% depuis son sommet. Indique le potentiel de récupération vs le risque.")
 
-    # Performance multi-timeframe
     st.subheader("📈 Performance")
     perf1, perf2, perf3, perf4 = st.columns(4)
     perf1.metric("24h", f"{cg_data.get('price_change_24h_pct', 0):+.1f}%")
-    perf2.metric("7j", f"{cg_data.get('price_change_7d_pct', 0):+.1f}%")
-    perf3.metric("30j", f"{cg_data.get('price_change_30d_pct', 0):+.1f}%")
+    perf2.metric("7 jours", f"{cg_data.get('price_change_7d_pct', 0):+.1f}%")
+    perf3.metric("30 jours", f"{cg_data.get('price_change_30d_pct', 0):+.1f}%")
     perf4.metric("1 an", f"{cg_data.get('price_change_1y_pct', 0):+.1f}%")
+else:
+    st.warning("⏳ Données fondamentales temporairement indisponibles (limite de requêtes CoinGecko). Rafraîchis la page dans 1 minute.")
 
 # Fiches texte
 f_col1, f_col2, f_col3 = st.columns(3)
