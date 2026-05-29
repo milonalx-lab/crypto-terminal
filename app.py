@@ -85,6 +85,132 @@ repo_fondamental = {
             {"title": "Whitepaper Avalanche", "body": "Consensus Snow et architecture multi-chain.", "url": "https://www.avax.network/whitepapers"},
             {"title": "Subnets Avalanche", "body": "Blockchains personnalisées.", "url": "https://www.coindesk.com/learn/what-is-avalanche/"}
         ]
+    },
+    "Hyperliquid (HYPE)": {
+        "coingecko_id": "hyperliquid",
+        "contract_mult": 1,
+        "index_id": "HYPE",
+        "tokenomics": "Offre max 1Md. Rachats et burn agressifs financés par les revenus du DEX (circulation passée sous 300M). Pas de capital-risque early extractif.",
+        "roadmap": "L1 perpétuels on-chain (200k ordres/s) + HyperEVM. Expansion vers spot, lending, RWA. Recherche de clarté réglementaire US sur les perp.",
+        "sensibilite": "Token de DEX à fort bêta. Très lié aux revenus de la plateforme et aux volumes de trading de dérivés. Sensible au narratif 'perp DEX'.",
+        "ticker_news": "HYPE",
+        "lien_x": "https://x.com/HyperliquidX",
+        "fallback_news": [
+            {"title": "Hyperliquid Docs", "body": "Architecture HyperBFT et L1 perpétuels.", "url": "https://hyperliquid.gitbook.io/hyperliquid-docs"},
+            {"title": "Hyperliquid sur CoinGecko", "body": "Données de marché et écosystème.", "url": "https://www.coingecko.com/en/coins/hyperliquid"}
+        ]
+    },
+    "Jupiter (JUP)": {
+        "coingecko_id": "jupiter-exchange-solana",
+        "contract_mult": 1,
+        "index_id": "JUP",
+        "tokenomics": "Token de gouvernance du 1er agrégateur DEX de Solana. Politique de rachat : 50% des frais protocole rachètent et bloquent du JUP pendant 3 ans.",
+        "roadmap": "Expansion produit : Jupiter Lend, Ultra V3, vérification de tokens. >50% du volume DEX Solana. Devenu 2e validateur du réseau.",
+        "sensibilite": "Proxy de l'activité DeFi sur Solana. Corrélé à SOL et aux volumes de swap/perp. Bêta élevé.",
+        "ticker_news": "JUP",
+        "lien_x": "https://x.com/JupiterExchange",
+        "fallback_news": [
+            {"title": "Jupiter Station", "body": "Documentation et produits Jupiter.", "url": "https://station.jup.ag/"},
+            {"title": "Jupiter sur CoinGecko", "body": "Données de marché JUP.", "url": "https://www.coingecko.com/en/coins/jupiter"}
+        ]
+    },
+    "Aave (AAVE)": {
+        "coingecko_id": "aave",
+        "contract_mult": 1,
+        "index_id": "AAVE",
+        "tokenomics": "Offre max 16M. Token de gouvernance + 'safety module' (staking qui assure le protocole). Rachats activés via les revenus du protocole.",
+        "roadmap": "Aave V4 (architecture unifiée de liquidité). GHO (stablecoin natif). Expansion multi-chain. Leader du lending DeFi par TVL.",
+        "sensibilite": "Blue chip DeFi. Corrélé à l'ETH et à la TVL DeFi globale. Bêta modéré pour un altcoin.",
+        "ticker_news": "AAVE",
+        "lien_x": "https://x.com/aave",
+        "fallback_news": [
+            {"title": "Aave Docs", "body": "Protocole de prêt décentralisé.", "url": "https://docs.aave.com/"},
+            {"title": "Aave sur CoinGecko", "body": "Données de marché AAVE.", "url": "https://www.coingecko.com/en/coins/aave"}
+        ]
+    },
+    "Polygon (POL)": {
+        "coingecko_id": "polygon-ecosystem-token",
+        "contract_mult": 1,
+        "index_id": "POL",
+        "tokenomics": "Token de nouvelle génération (ex-MATIC). Offre 10Md, légèrement inflationniste. Re-staking natif : sécuriser plusieurs chaînes ZK avec un seul token.",
+        "roadmap": "AggLayer (couche d'agrégation cross-chain ZK). Migration MATIC→POL finalisée. Focus sur les paiements et les RWA.",
+        "sensibilite": "Infrastructure L2 Ethereum. Corrélé à l'adoption des rollups et à l'ETH. Concurrence forte (Arbitrum, Base).",
+        "ticker_news": "POL",
+        "lien_x": "https://x.com/0xPolygon",
+        "fallback_news": [
+            {"title": "Polygon Docs", "body": "AggLayer et chaînes ZK.", "url": "https://docs.polygon.technology/"},
+            {"title": "Polygon sur CoinGecko", "body": "Données de marché POL.", "url": "https://www.coingecko.com/en/coins/polygon-ecosystem-token"}
+        ]
+    },
+    "Lido DAO (LDO)": {
+        "coingecko_id": "lido-dao",
+        "contract_mult": 1,
+        "index_id": "LDO",
+        "tokenomics": "Token de gouvernance du plus gros protocole de liquid staking ETH. Offre 1Md. La valeur dépend des frais prélevés sur les récompenses de staking.",
+        "roadmap": "Maintien de la position dominante sur le staking ETH (stETH). Diversification des validateurs. Enjeux de décentralisation.",
+        "sensibilite": "Proxy du staking Ethereum. Très corrélé à l'ETH et aux flux de staking. Sensible aux débats réglementaires sur le staking.",
+        "ticker_news": "LDO",
+        "lien_x": "https://x.com/LidoFinance",
+        "fallback_news": [
+            {"title": "Lido Docs", "body": "Liquid staking Ethereum.", "url": "https://docs.lido.fi/"},
+            {"title": "Lido sur CoinGecko", "body": "Données de marché LDO.", "url": "https://www.coingecko.com/en/coins/lido-dao"}
+        ]
+    },
+    "Fetch.ai (FET)": {
+        "coingecko_id": "fetch-ai",
+        "contract_mult": 1,
+        "index_id": "FET",
+        "tokenomics": "Token de l'Artificial Superintelligence Alliance (fusion Fetch.ai, SingularityNET, Ocean). Utilisé pour les agents IA autonomes et l'accès aux services du réseau.",
+        "roadmap": "Construction d'une plateforme d'agents IA décentralisés. Fusion ASI en cours d'intégration des écosystèmes.",
+        "sensibilite": "Token thématique 'IA + crypto'. Très spéculatif, fort bêta. Réagit aux narratifs IA (annonces OpenAI, Nvidia, etc.).",
+        "ticker_news": "FET",
+        "lien_x": "https://x.com/Fetch_ai",
+        "fallback_news": [
+            {"title": "Fetch.ai Docs", "body": "Agents IA autonomes décentralisés.", "url": "https://fetch.ai/docs"},
+            {"title": "Fetch.ai sur CoinGecko", "body": "Données de marché FET.", "url": "https://www.coingecko.com/en/coins/fetch-ai"}
+        ]
+    },
+    "Arbitrum (ARB)": {
+        "coingecko_id": "arbitrum",
+        "contract_mult": 1,
+        "index_id": "ARB",
+        "tokenomics": "Token de gouvernance du principal rollup optimiste d'Ethereum. Offre 10Md avec déblocages programmés (attention à la dilution).",
+        "roadmap": "Stylus (smart contracts multi-langages). Orbit (chaînes L3 personnalisées). Maintien du leadership TVL sur les L2.",
+        "sensibilite": "Infrastructure L2 Ethereum. Corrélé à l'ETH et à l'activité DeFi. Sensible aux déblocages de tokens (vesting).",
+        "ticker_news": "ARB",
+        "lien_x": "https://x.com/arbitrum",
+        "fallback_news": [
+            {"title": "Arbitrum Docs", "body": "Rollup optimiste Ethereum.", "url": "https://docs.arbitrum.io/"},
+            {"title": "Arbitrum sur CoinGecko", "body": "Données de marché ARB.", "url": "https://www.coingecko.com/en/coins/arbitrum"}
+        ]
+    },
+    "NEAR Protocol (NEAR)": {
+        "coingecko_id": "near",
+        "contract_mult": 1,
+        "index_id": "NEAR",
+        "tokenomics": "L1 avec sharding (Nightshade). Inflation ~5%, 70% des frais brûlés. Staking yield significatif.",
+        "roadmap": "Positionnement comme couche d'abstraction de chaînes + infrastructure pour l'IA décentralisée. Chain Signatures (contrôle cross-chain).",
+        "sensibilite": "L1 alternatif à fort bêta. Réagit aux narratifs IA et abstraction de compte. Corrélé au sentiment altcoin global.",
+        "ticker_news": "NEAR",
+        "lien_x": "https://x.com/NEARProtocol",
+        "fallback_news": [
+            {"title": "NEAR Docs", "body": "L1 à sharding et abstraction de chaînes.", "url": "https://docs.near.org/"},
+            {"title": "NEAR sur CoinGecko", "body": "Données de marché NEAR.", "url": "https://www.coingecko.com/en/coins/near"}
+        ]
+    },
+    "Sui (SUI)": {
+        "coingecko_id": "sui",
+        "contract_mult": 1,
+        "index_id": "SUI",
+        "tokenomics": "L1 utilisant le langage Move (ex-équipe Meta/Diem). Offre max 10Md avec déblocages. Staking et frais de gas en SUI.",
+        "roadmap": "Exécution parallèle pour haut débit. Focus gaming, DeFi et objets on-chain. Écosystème en croissance rapide.",
+        "sensibilite": "L1 récent à très fort bêta. Très spéculatif, sensible aux déblocages de tokens et au narratif 'Solana killer'.",
+        "ticker_news": "SUI",
+        "lien_x": "https://x.com/SuiNetwork",
+        "fallback_news": [
+            {"title": "Sui Docs", "body": "L1 à langage Move et exécution parallèle.", "url": "https://docs.sui.io/"},
+            {"title": "Sui sur CoinGecko", "body": "Données de marché SUI.", "url": "https://www.coingecko.com/en/coins/sui"}
+        ]
     }
 }
 
@@ -94,6 +220,15 @@ options_cryptos = {
     "Solana (SOL)": "SOLUSDT",
     "Chainlink (LINK)": "LINKUSDT",
     "Avalanche (AVAX)": "AVAXUSDT",
+    "Hyperliquid (HYPE)": "HYPEUSDT",
+    "Jupiter (JUP)": "JUPUSDT",
+    "Aave (AAVE)": "AAVEUSDT",
+    "Polygon (POL)": "POLUSDT",
+    "Lido DAO (LDO)": "LDOUSDT",
+    "Fetch.ai (FET)": "FETUSDT",
+    "Arbitrum (ARB)": "ARBUSDT",
+    "NEAR Protocol (NEAR)": "NEARUSDT",
+    "Sui (SUI)": "SUIUSDT",
 }
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -326,6 +461,15 @@ def charger_actualites(ticker, coingecko_id):
                 "marinade", "solana mobile", "saga phone", "memecoin solana"],
         "LINK": ["chainlink", "link", "ccip", "oracle", "sergey nazarov", "data feed", "cross-chain link"],
         "AVAX": ["avalanche", "avax", "subnet", "ava labs", "emin gun sirer", "avalanche9000", "core wallet"],
+        "HYPE": ["hyperliquid", "hype", "hyperbft", "hyperevm", "hypercore", "perp dex", "hyperliquid dex"],
+        "JUP": ["jupiter", "jup", "jupiter exchange", "jupiter dex", "dex aggregator solana", "jupiter lend", "jupiter perps"],
+        "AAVE": ["aave", "ghо", "gho stablecoin", "aave v4", "lending defi", "safety module", "stani kulechov"],
+        "POL": ["polygon", "pol", "matic", "agglayer", "polygon zk", "polygon pos", "polygon labs"],
+        "LDO": ["lido", "ldo", "steth", "liquid staking", "lido dao", "lido finance", "staked eth"],
+        "FET": ["fetch.ai", "fetch ai", "fet", "artificial superintelligence", "asi alliance", "singularitynet", "ocean protocol", "ai agent"],
+        "ARB": ["arbitrum", "arb", "arbitrum one", "stylus", "orbit chain", "offchain labs", "rollup optimiste"],
+        "NEAR": ["near protocol", "near", "nightshade", "chain signatures", "near foundation", "illia polosukhin"],
+        "SUI": ["sui", "sui network", "move language", "mysten labs", "sui blockchain", "walrus"],
     }
     kw_list = ecosystem_kw.get(ticker, [ticker.lower(), nom_complet])
 
