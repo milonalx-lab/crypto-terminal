@@ -6,6 +6,10 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import datetime, timedelta
 
+# --- Modules de correction (fichiers à la racine du repo) ---
+from data_fetch import fetch_hyperliquid_derivs, fetch_btc_macro
+from terminal_fixes import last_broken_resistance, validate_breakout, apply_macro_guardrail
+
 # ══════════════════════════════════════════════════════════════════════════════
 # 1. INITIALISATION
 # ══════════════════════════════════════════════════════════════════════════════
@@ -666,14 +670,23 @@ def calculer_fibonacci(df, lookback=100):
 
 
 def detecter_supports_resistances(df, window=15, nb=3):
-    """Détection améliorée : exclut les bougies non confirmées."""
-    df_confirmed = df.iloc[:-window]  # Exclure les bougies trop récentes
-    if len(df_confirmed) < window * 2:
+    """Niveaux pivots RELATIFS AU PRIX : supports sous le prix, résistances au-dessus.
+    Corrige les niveaux périmés (ex : 'résistance 44,78$' alors que le prix est à 67$).
+    Convention conservée : liste_supports[-1] et liste_resistances[-1] = le plus proche."""
+    if len(df) < window * 2 + 2:
         return [], []
-    is_min = df_confirmed['Low'] == df_confirmed['Low'].rolling(window=window, center=True).min()
-    is_max = df_confirmed['High'] == df_confirmed['High'].rolling(window=window, center=True).max()
-    supports = df_confirmed[is_min]['Low'].tail(nb).tolist()
-    resistances = df_confirmed[is_max]['High'].tail(nb).tolist()
+    prix = float(df['Close'].iloc[-1])
+    conf = df.iloc[:-window]  # exclut les bougies non confirmées
+    if len(conf) < window:
+        return [], []
+    is_min = conf['Low'] == conf['Low'].rolling(window=window, center=True).min()
+    is_max = conf['High'] == conf['High'].rolling(window=window, center=True).max()
+    lows = conf[is_min]['Low'].tolist()
+    highs = conf[is_max]['High'].tolist()
+    # supports SOUS le prix : trié croissant -> [-1] = le plus haut = le plus proche
+    supports = sorted([l for l in lows if l < prix])[-nb:]
+    # résistances AU-DESSUS du prix : trié décroissant -> [-1] = le plus bas = le plus proche
+    resistances = sorted([h for h in highs if h > prix], reverse=True)[-nb:]
     return supports, resistances
 
 
@@ -837,17 +850,19 @@ def score_breakout(df, liste_resistances):
     score = 0.0
     signaux = []
 
-    # Cassure d'une résistance récente
+    # Cassure d'une résistance récente — anti-chasse via validate_breakout
     resistance_cassee = None
-    if liste_resistances:
-        res_proche = min(liste_resistances, key=lambda r: abs(r - prix))
-        if prix >= res_proche * 0.99:  # à 1% ou au-dessus
-            score += 3.0
-            resistance_cassee = res_proche
-            signaux.append(("✅", f"Cassure de résistance ({res_proche:,.2f} $)"))
-        elif prix >= res_proche * 0.97:
-            score += 1.0
-            signaux.append(("⚪", f"Approche de résistance ({res_proche:,.2f} $) — guetter la cassure"))
+    df_lc = df.rename(columns={'High': 'high', 'Low': 'low'})
+    niveau_casse = last_broken_resistance(df_lc, prix)
+    bk = validate_breakout(prix, niveau_casse, max_extension_pct=8.0)
+    if bk['valid']:
+        score += 3.0
+        resistance_cassee = niveau_casse
+        signaux.append(("✅", f"Cassure crédible de {niveau_casse:,.2f} $ (+{bk['extension_pct']:.1f}%)"))
+    elif niveau_casse is not None and bk.get('extension_pct') is not None and bk['extension_pct'] > 8.0:
+        signaux.append(("⛔", f"Cassure de {niveau_casse:,.2f} $ déjà dépassée de {bk['extension_pct']:.0f}% — chasse, attendre un repli"))
+    else:
+        signaux.append(("⚪", "Pas de cassure nette récente"))
 
     # Volume de confirmation
     if infos['Volume'] > 1.3 * infos['Vol_MA_20']:
@@ -973,7 +988,13 @@ df = charger_donnees_prix(fiche['coingecko_id'], fiche['ticker_news'])
 if df.empty:
     st.stop()
 
-funding, open_interest_usd, deriv_volume = charger_derives_coingecko(fiche['index_id'])
+_d = fetch_hyperliquid_derivs(fiche['index_id'])
+if 'error' not in _d:
+    funding = _d['funding_8h_pct']
+    open_interest_usd = _d['open_interest_usd']
+    deriv_volume = _d['volume_24h_usd']
+else:
+    funding, open_interest_usd, deriv_volume = charger_derives_coingecko(fiche['index_id'])
 ls_ratio = charger_long_short_ratio(symbole_api)
 oi_var_24h = None  # variation OI 24h indisponible via agrégateur gratuit
 fng_valeur, fng_statut, fng_historique = charger_fear_and_greed()
@@ -1058,6 +1079,42 @@ elif "Breakout" in nom_setup:
     signaux_reco, zone_reco = sig_break, zone_break
 else:
     signaux_reco, zone_reco = sig_rev, zone_rev
+
+# ── GARDE-FOU MACRO / BÊTA : la corrélation BTC peut primer sur le setup ──
+_macro = fetch_btc_macro()
+_btc_chg = _macro.get('btc_change_24h') if 'error' not in _macro else None
+_btc_below_ma = _macro.get('btc_below_key_ma', False)
+_ath = float(df['High'].max())
+_dist_ath = (prix - _ath) / _ath * 100 if _ath > 0 else 0.0
+_beta = 1.0 if fiche['index_id'] == 'BTC' else None  # None => prudence haut bêta
+_setup_type = ('breakout' if 'Breakout' in nom_setup
+               else 'pullback' if 'Pullback' in nom_setup else 'reversal')
+
+score_final, raisons_macro, veto_macro = apply_macro_guardrail(
+    raw_score=score_setup,
+    btc_change_24h=_btc_chg,
+    fng_index=fng_valeur,
+    dist_from_ath_pct=_dist_ath,
+    asset_beta=_beta,
+    btc_below_key_ma=_btc_below_ma,
+    funding_rate=funding,
+    setup_type=_setup_type,
+)
+score_setup = score_final
+
+# Recalcul du verdict après garde-fou
+if veto_macro:
+    verdict, couleur = "ENTRÉE DÉCONSEILLÉE (garde-fou macro)", "error"
+elif score_setup >= 6.5:
+    verdict, couleur = "ENTRÉE ENVISAGEABLE", "success"
+elif score_setup >= 4.5:
+    verdict, couleur = "SURVEILLER DE PRÈS", "warning"
+else:
+    verdict, couleur = "S'ABSTENIR POUR L'INSTANT", "error"
+
+# Injecter les raisons du garde-fou dans la lecture du setup
+for _r in raisons_macro:
+    signaux_reco.append(("⛔" if veto_macro else "⚠️", _r))
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 9. AFFICHAGE PRINCIPAL
