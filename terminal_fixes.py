@@ -206,6 +206,42 @@ def suggest_stop_and_size(entry, atr, capital, risk_pct, nearest_support=None,
 
 
 # --------------------------------------------------------------------------- #
+# 5. VALIDATION DE BREAKOUT (tue le signal "cassure de 45,79$")               #
+# --------------------------------------------------------------------------- #
+def last_broken_resistance(df, current_price, left=3, right=3,
+                           lookback=180, cluster_pct=0.015):
+    """Plus haute ancienne résistance désormais SOUS le prix = le vrai niveau cassé.
+    Remplace la référence périmée du terminal."""
+    data = df.tail(lookback)
+    highs = data["high"].to_numpy(dtype=float)
+    lows = data["low"].to_numpy(dtype=float)
+    if len(highs) < (left + right + 5):
+        return None
+    piv_hi, _ = _pivots(highs, lows, left, right)
+    broken = _cluster([h for h in piv_hi if h < current_price], cluster_pct)
+    return round(max(broken), 4) if broken else None
+
+
+def validate_breakout(current_price, broken_level, max_extension_pct=8.0):
+    """
+    Vérifie qu'un signal 'breakout' n'est pas une chasse.
+    broken_level : niveau réellement cassé (cf. last_broken_resistance).
+    Retourne dict avec 'valid', 'extension_pct', 'verdict'.
+    """
+    if broken_level is None or broken_level <= 0:
+        return {"valid": False, "extension_pct": None,
+                "verdict": "aucun niveau de cassure identifiable"}
+    ext = (current_price - broken_level) / broken_level * 100
+    if ext < 0:
+        return {"valid": False, "extension_pct": round(ext, 2),
+                "verdict": "prix sous le niveau : pas de cassure"}
+    valid = ext <= max_extension_pct
+    verdict = ("cassure exploitable" if valid
+               else f"cassure dépassée de {ext:.1f}% : chasse, attendre un repli")
+    return {"valid": bool(valid), "extension_pct": round(ext, 2), "verdict": verdict}
+
+
+# --------------------------------------------------------------------------- #
 # EXEMPLE D'INTÉGRATION STREAMLIT (à adapter à tes variables)                  #
 # --------------------------------------------------------------------------- #
 # import streamlit as st
