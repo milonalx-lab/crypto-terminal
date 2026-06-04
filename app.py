@@ -85,6 +85,132 @@ repo_fondamental = {
             {"title": "Whitepaper Avalanche", "body": "Consensus Snow et architecture multi-chain.", "url": "https://www.avax.network/whitepapers"},
             {"title": "Subnets Avalanche", "body": "Blockchains personnalisées.", "url": "https://www.coindesk.com/learn/what-is-avalanche/"}
         ]
+    },
+    "Hyperliquid (HYPE)": {
+        "coingecko_id": "hyperliquid",
+        "contract_mult": 1,
+        "index_id": "HYPE",
+        "tokenomics": "Offre max 1Md. Rachats et burn agressifs financés par les revenus du DEX (circulation passée sous 300M). Pas de capital-risque early extractif.",
+        "roadmap": "L1 perpétuels on-chain (200k ordres/s) + HyperEVM. Expansion vers spot, lending, RWA. Recherche de clarté réglementaire US sur les perp.",
+        "sensibilite": "Token de DEX à fort bêta. Très lié aux revenus de la plateforme et aux volumes de trading de dérivés. Sensible au narratif 'perp DEX'.",
+        "ticker_news": "HYPE",
+        "lien_x": "https://x.com/HyperliquidX",
+        "fallback_news": [
+            {"title": "Hyperliquid Docs", "body": "Architecture HyperBFT et L1 perpétuels.", "url": "https://hyperliquid.gitbook.io/hyperliquid-docs"},
+            {"title": "Hyperliquid sur CoinGecko", "body": "Données de marché et écosystème.", "url": "https://www.coingecko.com/en/coins/hyperliquid"}
+        ]
+    },
+    "Jupiter (JUP)": {
+        "coingecko_id": "jupiter-exchange-solana",
+        "contract_mult": 1,
+        "index_id": "JUP",
+        "tokenomics": "Token de gouvernance du 1er agrégateur DEX de Solana. Politique de rachat : 50% des frais protocole rachètent et bloquent du JUP pendant 3 ans.",
+        "roadmap": "Expansion produit : Jupiter Lend, Ultra V3, vérification de tokens. >50% du volume DEX Solana. Devenu 2e validateur du réseau.",
+        "sensibilite": "Proxy de l'activité DeFi sur Solana. Corrélé à SOL et aux volumes de swap/perp. Bêta élevé.",
+        "ticker_news": "JUP",
+        "lien_x": "https://x.com/JupiterExchange",
+        "fallback_news": [
+            {"title": "Jupiter Station", "body": "Documentation et produits Jupiter.", "url": "https://station.jup.ag/"},
+            {"title": "Jupiter sur CoinGecko", "body": "Données de marché JUP.", "url": "https://www.coingecko.com/en/coins/jupiter"}
+        ]
+    },
+    "Aave (AAVE)": {
+        "coingecko_id": "aave",
+        "contract_mult": 1,
+        "index_id": "AAVE",
+        "tokenomics": "Offre max 16M. Token de gouvernance + 'safety module' (staking qui assure le protocole). Rachats activés via les revenus du protocole.",
+        "roadmap": "Aave V4 (architecture unifiée de liquidité). GHO (stablecoin natif). Expansion multi-chain. Leader du lending DeFi par TVL.",
+        "sensibilite": "Blue chip DeFi. Corrélé à l'ETH et à la TVL DeFi globale. Bêta modéré pour un altcoin.",
+        "ticker_news": "AAVE",
+        "lien_x": "https://x.com/aave",
+        "fallback_news": [
+            {"title": "Aave Docs", "body": "Protocole de prêt décentralisé.", "url": "https://docs.aave.com/"},
+            {"title": "Aave sur CoinGecko", "body": "Données de marché AAVE.", "url": "https://www.coingecko.com/en/coins/aave"}
+        ]
+    },
+    "Polygon (POL)": {
+        "coingecko_id": "polygon-ecosystem-token",
+        "contract_mult": 1,
+        "index_id": "POL",
+        "tokenomics": "Token de nouvelle génération (ex-MATIC). Offre 10Md, légèrement inflationniste. Re-staking natif : sécuriser plusieurs chaînes ZK avec un seul token.",
+        "roadmap": "AggLayer (couche d'agrégation cross-chain ZK). Migration MATIC→POL finalisée. Focus sur les paiements et les RWA.",
+        "sensibilite": "Infrastructure L2 Ethereum. Corrélé à l'adoption des rollups et à l'ETH. Concurrence forte (Arbitrum, Base).",
+        "ticker_news": "POL",
+        "lien_x": "https://x.com/0xPolygon",
+        "fallback_news": [
+            {"title": "Polygon Docs", "body": "AggLayer et chaînes ZK.", "url": "https://docs.polygon.technology/"},
+            {"title": "Polygon sur CoinGecko", "body": "Données de marché POL.", "url": "https://www.coingecko.com/en/coins/polygon-ecosystem-token"}
+        ]
+    },
+    "Lido DAO (LDO)": {
+        "coingecko_id": "lido-dao",
+        "contract_mult": 1,
+        "index_id": "LDO",
+        "tokenomics": "Token de gouvernance du plus gros protocole de liquid staking ETH. Offre 1Md. La valeur dépend des frais prélevés sur les récompenses de staking.",
+        "roadmap": "Maintien de la position dominante sur le staking ETH (stETH). Diversification des validateurs. Enjeux de décentralisation.",
+        "sensibilite": "Proxy du staking Ethereum. Très corrélé à l'ETH et aux flux de staking. Sensible aux débats réglementaires sur le staking.",
+        "ticker_news": "LDO",
+        "lien_x": "https://x.com/LidoFinance",
+        "fallback_news": [
+            {"title": "Lido Docs", "body": "Liquid staking Ethereum.", "url": "https://docs.lido.fi/"},
+            {"title": "Lido sur CoinGecko", "body": "Données de marché LDO.", "url": "https://www.coingecko.com/en/coins/lido-dao"}
+        ]
+    },
+    "Fetch.ai (FET)": {
+        "coingecko_id": "fetch-ai",
+        "contract_mult": 1,
+        "index_id": "FET",
+        "tokenomics": "Token de l'Artificial Superintelligence Alliance (fusion Fetch.ai, SingularityNET, Ocean). Utilisé pour les agents IA autonomes et l'accès aux services du réseau.",
+        "roadmap": "Construction d'une plateforme d'agents IA décentralisés. Fusion ASI en cours d'intégration des écosystèmes.",
+        "sensibilite": "Token thématique 'IA + crypto'. Très spéculatif, fort bêta. Réagit aux narratifs IA (annonces OpenAI, Nvidia, etc.).",
+        "ticker_news": "FET",
+        "lien_x": "https://x.com/Fetch_ai",
+        "fallback_news": [
+            {"title": "Fetch.ai Docs", "body": "Agents IA autonomes décentralisés.", "url": "https://fetch.ai/docs"},
+            {"title": "Fetch.ai sur CoinGecko", "body": "Données de marché FET.", "url": "https://www.coingecko.com/en/coins/fetch-ai"}
+        ]
+    },
+    "Arbitrum (ARB)": {
+        "coingecko_id": "arbitrum",
+        "contract_mult": 1,
+        "index_id": "ARB",
+        "tokenomics": "Token de gouvernance du principal rollup optimiste d'Ethereum. Offre 10Md avec déblocages programmés (attention à la dilution).",
+        "roadmap": "Stylus (smart contracts multi-langages). Orbit (chaînes L3 personnalisées). Maintien du leadership TVL sur les L2.",
+        "sensibilite": "Infrastructure L2 Ethereum. Corrélé à l'ETH et à l'activité DeFi. Sensible aux déblocages de tokens (vesting).",
+        "ticker_news": "ARB",
+        "lien_x": "https://x.com/arbitrum",
+        "fallback_news": [
+            {"title": "Arbitrum Docs", "body": "Rollup optimiste Ethereum.", "url": "https://docs.arbitrum.io/"},
+            {"title": "Arbitrum sur CoinGecko", "body": "Données de marché ARB.", "url": "https://www.coingecko.com/en/coins/arbitrum"}
+        ]
+    },
+    "NEAR Protocol (NEAR)": {
+        "coingecko_id": "near",
+        "contract_mult": 1,
+        "index_id": "NEAR",
+        "tokenomics": "L1 avec sharding (Nightshade). Inflation ~5%, 70% des frais brûlés. Staking yield significatif.",
+        "roadmap": "Positionnement comme couche d'abstraction de chaînes + infrastructure pour l'IA décentralisée. Chain Signatures (contrôle cross-chain).",
+        "sensibilite": "L1 alternatif à fort bêta. Réagit aux narratifs IA et abstraction de compte. Corrélé au sentiment altcoin global.",
+        "ticker_news": "NEAR",
+        "lien_x": "https://x.com/NEARProtocol",
+        "fallback_news": [
+            {"title": "NEAR Docs", "body": "L1 à sharding et abstraction de chaînes.", "url": "https://docs.near.org/"},
+            {"title": "NEAR sur CoinGecko", "body": "Données de marché NEAR.", "url": "https://www.coingecko.com/en/coins/near"}
+        ]
+    },
+    "Sui (SUI)": {
+        "coingecko_id": "sui",
+        "contract_mult": 1,
+        "index_id": "SUI",
+        "tokenomics": "L1 utilisant le langage Move (ex-équipe Meta/Diem). Offre max 10Md avec déblocages. Staking et frais de gas en SUI.",
+        "roadmap": "Exécution parallèle pour haut débit. Focus gaming, DeFi et objets on-chain. Écosystème en croissance rapide.",
+        "sensibilite": "L1 récent à très fort bêta. Très spéculatif, sensible aux déblocages de tokens et au narratif 'Solana killer'.",
+        "ticker_news": "SUI",
+        "lien_x": "https://x.com/SuiNetwork",
+        "fallback_news": [
+            {"title": "Sui Docs", "body": "L1 à langage Move et exécution parallèle.", "url": "https://docs.sui.io/"},
+            {"title": "Sui sur CoinGecko", "body": "Données de marché SUI.", "url": "https://www.coingecko.com/en/coins/sui"}
+        ]
     }
 }
 
@@ -94,31 +220,62 @@ options_cryptos = {
     "Solana (SOL)": "SOLUSDT",
     "Chainlink (LINK)": "LINKUSDT",
     "Avalanche (AVAX)": "AVAXUSDT",
+    "Hyperliquid (HYPE)": "HYPEUSDT",
+    "Jupiter (JUP)": "JUPUSDT",
+    "Aave (AAVE)": "AAVEUSDT",
+    "Polygon (POL)": "POLUSDT",
+    "Lido DAO (LDO)": "LDOUSDT",
+    "Fetch.ai (FET)": "FETUSDT",
+    "Arbitrum (ARB)": "ARBUSDT",
+    "NEAR Protocol (NEAR)": "NEARUSDT",
+    "Sui (SUI)": "SUIUSDT",
 }
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 3. FONCTIONS DE CHARGEMENT SÉCURISÉES
 # ══════════════════════════════════════════════════════════════════════════════
 
-@st.cache_data(ttl=60)
-def charger_donnees_prix(symbole, intervalle="1d", limite=200):
-    """Charge les bougies OHLC via CoinGecko (sans restriction géographique).
-    symbole ici = coingecko_id (ex: 'bitcoin', 'ethereum')
+@st.cache_data(ttl=300)
+def charger_donnees_prix(coingecko_id, ticker_cc=None):
+    """Charge 365 vraies bougies JOURNALIÈRES via CryptoCompare (priorité),
+    fallback CoinGecko si CryptoCompare échoue.
+    ticker_cc : ticker CryptoCompare (ex: 'BTC', 'ETH'). Si None, on tente seulement CoinGecko.
     """
+    # ── Source 1 : CryptoCompare histoday (365 vraies bougies J) ──
+    if ticker_cc:
+        try:
+            url = (f"https://min-api.cryptocompare.com/data/v2/histoday"
+                   f"?fsym={ticker_cc}&tsym=USD&limit=365")
+            rep = requests.get(url, timeout=12).json()
+            data = rep.get('Data', {}).get('Data', [])
+            if data and len(data) >= 200:
+                df = pd.DataFrame(data)
+                df['Date'] = pd.to_datetime(df['time'], unit='s')
+                df = df.rename(columns={
+                    'open': 'Open', 'high': 'High', 'low': 'Low', 'close': 'Close',
+                    'volumefrom': 'Volume', 'volumeto': 'Quote_volume'
+                })
+                df['Trades'] = 0
+                df = df[['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Quote_volume', 'Trades']].copy()
+                for col in ['Open', 'High', 'Low', 'Close', 'Volume', 'Quote_volume']:
+                    df[col] = pd.to_numeric(df[col])
+                return df.reset_index(drop=True)
+        except Exception:
+            pass
+
+    # ── Source 2 : CoinGecko OHLC (fallback, granularité 4j sur 365 jours) ──
     try:
-        # CoinGecko OHLC : valeurs acceptées = 1,7,14,30,90,180,365
         jours = 365
-        url = f"https://api.coingecko.com/api/v3/coins/{symbole}/ohlc?vs_currency=usd&days={jours}"
-        reponse = requests.get(url, timeout=15)
-        reponse.raise_for_status()
-        data = reponse.json()
+        url = f"https://api.coingecko.com/api/v3/coins/{coingecko_id}/ohlc?vs_currency=usd&days={jours}"
+        rep = requests.get(url, timeout=12)
+        rep.raise_for_status()
+        data = rep.json()
         df = pd.DataFrame(data, columns=['Timestamp', 'Open', 'High', 'Low', 'Close'])
         df['Date'] = pd.to_datetime(df['Timestamp'], unit='ms')
         for col in ['Open', 'High', 'Low', 'Close']:
             df[col] = pd.to_numeric(df[col])
-        # Volume via market_chart (requête séparée)
-        url_vol = f"https://api.coingecko.com/api/v3/coins/{symbole}/market_chart?vs_currency=usd&days={jours}&interval=daily"
-        rep_vol = requests.get(url_vol, timeout=15).json()
+        url_vol = f"https://api.coingecko.com/api/v3/coins/{coingecko_id}/market_chart?vs_currency=usd&days={jours}&interval=daily"
+        rep_vol = requests.get(url_vol, timeout=12).json()
         volumes = rep_vol.get('total_volumes', [])
         df_vol = pd.DataFrame(volumes, columns=['Timestamp_v', 'Volume'])
         df_vol['Date_v'] = pd.to_datetime(df_vol['Timestamp_v'], unit='ms').dt.normalize()
@@ -131,7 +288,7 @@ def charger_donnees_prix(symbole, intervalle="1d", limite=200):
         df = df.drop_duplicates(subset='Date').reset_index(drop=True)
         return df
     except Exception as e:
-        st.error(f"Erreur de chargement CoinGecko ({symbole}) : {e}")
+        st.error(f"Erreur de chargement des prix ({coingecko_id}) : {e}")
         return pd.DataFrame()
 
 
@@ -293,6 +450,49 @@ def charger_actualites(ticker, coingecko_id):
         ("Decrypt", "https://decrypt.co/feed"),
         ("Bitcoin Magazine", "https://bitcoinmagazine.com/feed"),
     ]
+
+    # ── Mots-clés écosystème par actif (renforcent la pertinence) ──
+    ecosystem_kw = {
+        "BTC": ["bitcoin", "btc", "satoshi", "halving", "lightning network", "ordinals", "blackrock spot etf",
+                "michael saylor", "microstrategy", "miner", "hash rate"],
+        "ETH": ["ethereum", "eth", "vitalik", "buterin", "ether", "ethereum 2", "merge", "shanghai",
+                "dencun", "pectra", "evm", "smart contract", "ethereum etf", "lido", "staking eth"],
+        "SOL": ["solana", "sol", "anatoly", "yakovenko", "firedancer", "jito", "phantom wallet",
+                "marinade", "solana mobile", "saga phone", "memecoin solana"],
+        "LINK": ["chainlink", "link", "ccip", "oracle", "sergey nazarov", "data feed", "cross-chain link"],
+        "AVAX": ["avalanche", "avax", "subnet", "ava labs", "emin gun sirer", "avalanche9000", "core wallet"],
+        "HYPE": ["hyperliquid", "hype", "hyperbft", "hyperevm", "hypercore", "perp dex", "hyperliquid dex"],
+        "JUP": ["jupiter", "jup", "jupiter exchange", "jupiter dex", "dex aggregator solana", "jupiter lend", "jupiter perps"],
+        "AAVE": ["aave", "ghо", "gho stablecoin", "aave v4", "lending defi", "safety module", "stani kulechov"],
+        "POL": ["polygon", "pol", "matic", "agglayer", "polygon zk", "polygon pos", "polygon labs"],
+        "LDO": ["lido", "ldo", "steth", "liquid staking", "lido dao", "lido finance", "staked eth"],
+        "FET": ["fetch.ai", "fetch ai", "fet", "artificial superintelligence", "asi alliance", "singularitynet", "ocean protocol", "ai agent"],
+        "ARB": ["arbitrum", "arb", "arbitrum one", "stylus", "orbit chain", "offchain labs", "rollup optimiste"],
+        "NEAR": ["near protocol", "near", "nightshade", "chain signatures", "near foundation", "illia polosukhin"],
+        "SUI": ["sui", "sui network", "move language", "mysten labs", "sui blockchain", "walrus"],
+    }
+    kw_list = ecosystem_kw.get(ticker, [ticker.lower(), nom_complet])
+
+    def score_pertinence(titre, desc):
+        """Retourne un score de pertinence (0 = hors sujet, >0 = lié)."""
+        titre_l = titre.lower()
+        desc_l = desc.lower()
+        score = 0
+        # Ticker ou nom dans le titre = très fort signal
+        if ticker.lower() in titre_l or nom_complet in titre_l:
+            score += 10
+        # Mot-clé écosystème dans le titre
+        for kw in kw_list:
+            if kw in titre_l:
+                score += 5
+                break
+        # Présence dans la description (mais moins fort)
+        for kw in kw_list:
+            if kw in desc_l:
+                score += 1
+                break
+        return score
+
     for source, url in feeds:
         try:
             rep = requests.get(url, headers=headers, timeout=8)
@@ -304,18 +504,19 @@ def charger_actualites(ticker, coingecko_id):
                 desc = nettoyer_html(item.findtext('description') or '')
                 lien = (item.findtext('link') or '').strip()
                 pub = (item.findtext('pubDate') or '').strip()
-                # Filtre de pertinence : ticker ou nom complet dans le titre/desc
-                texte_low = (titre + ' ' + desc).lower()
-                pertinent = (ticker.lower() in texte_low) or (nom_complet in texte_low)
-                # Pour BTC/ETH on accepte aussi les news macro générales
-                if pertinent:
+                sc = score_pertinence(titre, desc)
+                # Garder seulement les articles vraiment liés (score ≥ 5 = ticker/nom/mot-clé dans titre)
+                if sc >= 5:
                     bruts.append({"title": titre, "body": desc[:300], "url": lien,
-                                  "source": source, "date": pub[:16]})
+                                  "source": source, "date": pub[:16], "_score": sc})
         except Exception:
             continue
 
-    # ── Source 2 : CryptoCompare (si peu de résultats RSS) ──
-    if len(bruts) < 3:
+    # Trier par pertinence
+    bruts.sort(key=lambda x: x.get('_score', 0), reverse=True)
+
+    # ── Source 2 : CryptoCompare (filtré par catégorie, donc déjà pertinent) ──
+    if len(bruts) < 4:
         try:
             url = f"https://min-api.cryptocompare.com/data/v2/news/?categories={ticker}&lang=EN&sortOrder=popular"
             rep = requests.get(url, headers=headers, timeout=8)
@@ -327,11 +528,22 @@ def charger_actualites(ticker, coingecko_id):
                         "url": art.get('url', ''),
                         "source": art.get('source_info', {}).get('name', 'CryptoCompare'),
                         "date": datetime.fromtimestamp(art.get('published_on', 0)).strftime('%d/%m/%Y %H:%M') if art.get('published_on') else '',
+                        "_score": 8,  # déjà filtré par CryptoCompare donc pertinent par construction
                     })
         except Exception:
             pass
 
-    # ── Traduction FR des 6 articles les plus récents ──
+    # ── Déduplication par titre ──
+    vus = set()
+    uniques = []
+    for art in bruts:
+        cle = art['title'][:60].lower()
+        if cle not in vus:
+            vus.add(cle)
+            uniques.append(art)
+    bruts = uniques
+
+    # ── Traduction FR des 6 articles les plus pertinents ──
     articles = []
     for art in bruts[:6]:
         articles.append({
@@ -757,7 +969,7 @@ symbole_api = options_cryptos[choix]
 fiche = repo_fondamental[choix]
 
 # Chargement des données (CoinGecko ID pour les prix OHLC)
-df = charger_donnees_prix(fiche['coingecko_id'])
+df = charger_donnees_prix(fiche['coingecko_id'], fiche['ticker_news'])
 if df.empty:
     st.stop()
 
@@ -856,35 +1068,84 @@ st.markdown(f"# 💰 {choix.split()[0]} : **{prix:,.2f} USD**")
 # ── Bandeau RÉGIME ──
 reg_col1, reg_col2, reg_col3 = st.columns(3)
 reg_col1.metric("Régime de marché", f"{regime_emoji} {regime}",
-                help="Le contexte qui détermine quelle stratégie est valide. Haussier = on achète les replis. Baissier = on évite d'acheter (sauf contrarian). Range = on joue les extrêmes.")
+                help="📈 HAUSSIER : prix > MA200 ET MA50 > MA200 ET pente fond positive. On achète les replis (setup Pullback prioritaire).\n📉 BAISSIER : prix < MA200 ET MA50 < MA200. On évite d'acheter ; seul le Reversal contrarian est envisageable, à haut risque.\n↔️ RANGE : signaux mixtes. On joue les bornes : achat près du bas du range, vente près du haut.")
 reg_col2.metric("Pente MA200 (20j)", f"{pente_ma200:+.1f}%",
                 delta="Fond porteur" if pente_ma200 > 0 else "Fond fragile",
                 delta_color="normal" if pente_ma200 > 0 else "inverse",
-                help="Inclinaison de la tendance de fond. Positive = structure haussière saine. Négative = méfiance, le fond se dégrade.")
+                help="Inclinaison de la moyenne mobile 200 jours sur les 20 derniers jours.\n• > +2% : structure haussière solide, on peut surpondérer le long.\n• 0 à +2% : fond stable, biais haussier modéré.\n• -2% à 0 : fond qui s'essouffle, prudence sur les achats.\n• < -2% : tendance de fond clairement baissière, éviter les longs hors capitulation.")
 reg_col3.metric("Force tendance (ADX)", f"{infos['ADX']:.0f}",
                 delta="Directionnel" if infos['ADX'] > 25 else "Sans direction",
                 delta_color="normal" if infos['ADX'] > 25 else "off",
-                help=">25 = vraie tendance, les suivis de momentum fonctionnent. <20 = range, on privilégie les rebonds entre bornes.")
+                help="Mesure la FORCE de la tendance (pas la direction).\n• > 40 : tendance très forte (suivre, ne pas contre-trader).\n• 25–40 : tendance saine et exploitable, breakouts fiables.\n• 20–25 : tendance faible, à confirmer.\n• < 20 : marché en range, le RSI et les supports/résistances priment sur les MA.")
 
 # ── Métriques principales ──
 c1, c2, c3, c4, c5, c6 = st.columns(6)
 c1.metric("Prix", f"{prix:,.2f} $",
           delta=f"{cg_data.get('price_change_24h_pct', 0):.1f}% (24h)" if cg_data else None,
-          help="Prix actuel et variation sur 24h.")
-c2.metric("RSI (14j)", f"{infos['RSI']:.1f}",
-          help="Force relative 0–100. <30 = survendu. >70 = suracheté. 40–55 = zone de rebond saine en tendance.")
-c3.metric("MACD Hist", f"{infos['MACD_Hist']:.2f}",
-          delta="Haussier" if infos['MACD_Hist'] > 0 else "Baissier",
-          delta_color="normal" if infos['MACD_Hist'] > 0 else "inverse",
-          help="Momentum. Positif et croissant = accélération haussière. Retournement à la hausse = signal d'entrée.")
-c4.metric("ATR (volatilité)", f"{infos['ATR']:.2f} ({infos['ATR_Pct']:.1f}%)",
-          help="Volatilité moyenne. Plus c'est haut, plus ton stop doit être large.")
+          help="Prix actuel et variation sur 24h. La couleur du delta (vert/rouge) donne l'humeur du jour.")
+
+# ── Aide RSI structurée ──
+rsi_v = infos['RSI']
+rsi_action = ("Survente extrême — guetter divergence haussière ou capitulation" if rsi_v < 30
+              else "Zone de rebond — entrée potentielle en tendance haussière" if 30 <= rsi_v < 45
+              else "Momentum équilibré — neutre" if 45 <= rsi_v < 60
+              else "Momentum haussier — sain en début de hausse" if 60 <= rsi_v < 70
+              else "Suracheté — risque de correction, prudence pour entrer")
+c2.metric("RSI (14j)", f"{rsi_v:.1f}",
+          help=f"Force relative 0–100, période 14j (Wilder).\n• 0–30 : SURVENTE — capitulation, rebond statistique probable.\n• 30–45 : ZONE DE REBOND — idéal pour acheter un repli en tendance haussière.\n• 45–60 : neutre, attendre une direction.\n• 60–70 : momentum haussier sain.\n• 70–100 : SURACHETÉ — risque de correction.\n\nLecture actuelle : {rsi_action}.")
+
+# ── Aide MACD enrichie ──
+macd_v = infos['MACD']
+macd_h = infos['MACD_Hist']
+macd_h_prev = df['MACD_Hist'].iloc[-2]
+if macd_h > 0 and macd_h_prev <= 0:
+    macd_action = "Croisement haussier FRAIS — signal d'entrée fort"
+elif macd_h > 0 and macd_h > macd_h_prev:
+    macd_action = "Momentum haussier qui s'accélère — tendance en place"
+elif macd_h > 0 and macd_h < macd_h_prev:
+    macd_action = "Momentum haussier qui décélère — surveiller le retournement"
+elif macd_h < 0 and macd_h_prev >= 0:
+    macd_action = "Croisement baissier FRAIS — sortir ou éviter d'entrer"
+elif macd_h < 0 and macd_h > macd_h_prev:
+    macd_action = "Pression vendeuse qui faiblit — possible retournement en cours"
+else:
+    macd_action = "Momentum baissier qui s'amplifie — éviter d'entrer long"
+c3.metric("MACD Hist", f"{macd_h:.2f}",
+          delta="Haussier" if macd_h > 0 else "Baissier",
+          delta_color="normal" if macd_h > 0 else "inverse",
+          help=f"Histogramme MACD (différence MACD − Signal). Mesure l'accélération du momentum.\n• > 0 et CROISSANT : momentum haussier qui s'accélère (signal d'entrée).\n• > 0 et DÉCROISSANT : momentum haussier qui s'essouffle, retournement possible.\n• < 0 et CROISSANT : baisse qui s'épuise, possible reversal.\n• < 0 et DÉCROISSANT : panique vendeuse, éviter d'entrer.\n• Croisement de 0 vers le positif = signal d'achat classique.\n\nLecture actuelle : {macd_action}.")
+
+# ── Aide ATR enrichie ──
+atr_pct = infos['ATR_Pct']
+atr_action = ("Très faible volatilité — compression, mouvement imminent" if atr_pct < 1.5
+              else "Volatilité modérée — conditions normales" if atr_pct < 3
+              else "Volatilité élevée — élargir les stops" if atr_pct < 5
+              else "Volatilité extrême — taille de position réduite")
+c4.metric("ATR (volatilité)", f"{infos['ATR']:.2f} ({atr_pct:.1f}%)",
+          help=f"Amplitude moyenne d'une bougie sur 14j.\n• Stop loss recommandé : 1 à 1.5 × ATR sous l'entrée pour un swing standard.\n• ATR% < 1.5 : compression, breakout imminent souvent.\n• ATR% 1.5–3 : volatilité normale.\n• ATR% 3–5 : volatilité élevée, stops larges nécessaires.\n• ATR% > 5 : extrême, réduire la taille de position de moitié.\n\nLecture actuelle : {atr_action}.")
+
+# ── Aide Funding enrichie ──
+fund_action = ("Shorts dominants — pression de rachat, rebond possible" if funding < -0.01
+               else "Sain — pas de déséquilibre marqué" if -0.01 <= funding <= 0.03
+               else "Acheteurs un peu chauds — surveiller" if 0.03 < funding <= 0.05
+               else "SURCHAUFFE — purge baissière probable (malus −1 sur score)")
 c5.metric("Funding Rate", f"{funding:.4f}%" if funding != 0 else "N/A",
           delta="Surchauffe" if funding > 0.05 else ("Shorts paient" if funding < -0.01 else "Sain"),
           delta_color="inverse" if funding > 0.05 else "normal",
-          help="Coût du levier (8h). >0.05% = euphorie acheteuse (risque de purge). Négatif = shorts dominants (rebond possible).")
-c6.metric("VWAP 20j", f"{infos['VWAP_20']:,.2f} $",
-          help="Prix moyen pondéré par le volume. Sous le VWAP = on achète moins cher que la moyenne du marché. Support clé en tendance.")
+          help=f"Coût payé toutes les 8h entre traders à effet de levier sur les perpétuels.\n• < -0.01% : shorts paient les longs → carburant pour un rebond.\n• -0.01% à 0.03% : équilibre sain.\n• 0.03% à 0.05% : penchant haussier, début de chauffe.\n• > 0.05% : SURCHAUFFE acheteuse, risque de purge (long squeeze).\n\nLecture actuelle : {fund_action}.")
+
+# ── Aide VWAP enrichie ──
+vwap = infos['VWAP_20']
+ecart_vwap = ((prix - vwap) / vwap) * 100 if vwap > 0 else 0
+vwap_action = ("Très sous le VWAP — achat à prix moyen avantageux" if ecart_vwap < -3
+               else "Sous le VWAP — légère décote" if ecart_vwap < 0
+               else "Sur le VWAP — prix au juste milieu" if ecart_vwap < 1
+               else "Au-dessus du VWAP — premium léger" if ecart_vwap < 5
+               else "Très au-dessus — extension à risque")
+c6.metric("VWAP 20j", f"{vwap:,.2f} $",
+          delta=f"{ecart_vwap:+.1f}% du prix",
+          delta_color="normal" if ecart_vwap < 0 else "inverse",
+          help=f"Prix moyen pondéré par le volume sur 20 jours = la 'juste valeur' selon le marché.\n• Prix < VWAP : tu achètes moins cher que la moyenne pondérée. Support clé en tendance haussière.\n• Prix > VWAP : prime payée. Résistance dynamique en tendance baissière.\n• Écart >5% : extension du prix, retour vers le VWAP probable.\n\nLecture actuelle : {vwap_action}.")
 
 # ── DÉCISION : setup recommandé ──
 st.markdown("---")
@@ -938,6 +1199,28 @@ tab_chart, tab_oscillateurs, tab_ichimoku, tab_volume = st.tabs(
 )
 
 with tab_chart:
+    with st.expander("📖 Comment lire ce graphique", expanded=False):
+        st.markdown("""
+**Chandeliers japonais** : chaque bougie = 1 jour. Verte = clôture > ouverture. Rouge = clôture < ouverture. La mèche montre les extrêmes.
+
+**Ligne cyan (MA50)** : moyenne mobile 50 jours. Support/résistance dynamique en swing. Acheter sous MA50 en tendance haussière = entrée sur repli.
+
+**Ligne orange (MA200)** : moyenne mobile 200 jours. Frontière entre régime haussier (prix au-dessus) et baissier (en-dessous). Référence des institutionnels.
+
+**Bandes pointillées (Bollinger)** : enveloppe à ±2 écarts-types autour de la MA20.
+• Prix sous la bande basse = excès baissier statistique (rebond probable).
+• Prix sur la bande haute = excès haussier (correction probable).
+• Bandes qui se resserrent = compression → mouvement explosif imminent.
+
+**Ligne jaune pointillée (VWAP 20j)** : prix moyen pondéré par le volume. Support clé en tendance.
+
+**Lignes Fibonacci** : niveaux de retracement statistiques. 38.2%, 50% et 61.8% sont les zones de rebond les plus fréquentes après une vague de hausse ou de baisse.
+
+**Lignes S1/S2/S3 (vertes)** : supports détectés sur les creux locaux. **R1/R2/R3 (rouges)** : résistances sur les sommets locaux.
+
+**Histogramme inférieur (Volume)** : vert quand bougie haussière, rouge quand baissière. La ligne blanche = volume moyen 20j. Un volume > 1.5× la moyenne valide un mouvement.
+        """)
+
     fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.03,
                         row_heights=[0.75, 0.25],
                         subplot_titles=("", "Volume"))
@@ -996,6 +1279,32 @@ with tab_chart:
 
 
 with tab_oscillateurs:
+    with st.expander("📖 Comment lire ces oscillateurs", expanded=False):
+        st.markdown("""
+**RSI (Relative Strength Index)** — violet : oscillateur 0–100.
+• < 30 = survente (rebond statistique probable).
+• 30–45 = zone de rebond idéale en tendance haussière.
+• 45–60 = neutre.
+• 60–70 = momentum haussier sain.
+• > 70 = suracheté (correction probable).
+Méthode Wilder appliquée (lissage exponentiel correct).
+
+**Stochastic RSI** — bleu (%K) et orange (%D) : RSI appliqué à lui-même.
+• Croisement %K au-dessus de %D en zone basse (<20) = signal d'achat fort.
+• Plus réactif que le RSI brut, idéal pour timing fin d'entrée/sortie.
+
+**MACD** — bleu (ligne MACD) et orange (signal). Barres = histogramme.
+• MACD coupe le signal vers le haut → signal d'achat.
+• MACD coupe le signal vers le bas → signal de vente.
+• Histogramme positif et croissant = momentum haussier qui s'accélère.
+• Histogramme négatif et croissant = pression vendeuse qui faiblit (reversal possible).
+
+**ADX** — blanc : force de la tendance (pas la direction).
+• > 25 = tendance forte et exploitable.
+• < 20 = marché en range, éviter les stratégies de suivi.
+**+DI** (vert) > **-DI** (rouge) = direction haussière. Inverse = baissière.
+        """)
+
     fig_osc = make_subplots(rows=3, cols=1, shared_xaxes=True, vertical_spacing=0.05,
                             subplot_titles=("RSI (14) & Stochastic RSI", "MACD", "ADX"))
 
@@ -1034,6 +1343,25 @@ with tab_oscillateurs:
 
 
 with tab_ichimoku:
+    with st.expander("📖 Comment lire l'Ichimoku", expanded=False):
+        st.markdown("""
+L'Ichimoku Kinko Hyo est un système complet qui donne tendance, momentum, supports et signaux dans un seul graphique.
+
+**Tenkan (bleu, période 9)** : signal court terme.
+**Kijun (rouge, période 26)** : référence moyen terme, support/résistance dynamique.
+• Tenkan > Kijun = momentum positif (signal d'achat).
+• Tenkan < Kijun = momentum négatif (signal de vente).
+
+**Nuage (Senkou A et B)** : zone de support/résistance projetée 26 jours en avant.
+• Prix au-dessus du nuage = tendance HAUSSIÈRE confirmée.
+• Prix dans le nuage = zone neutre, indécision.
+• Prix sous le nuage = tendance BAISSIÈRE confirmée.
+• Nuage vert (Senkou A > B) = biais haussier. Rouge = biais baissier.
+• Épaisseur du nuage = force du support/résistance.
+
+**Signal d'achat complet** : prix au-dessus du nuage + Tenkan > Kijun + nuage vert = configuration idéale pour entrer long.
+        """)
+
     fig_ichi = go.Figure()
     fig_ichi.add_trace(go.Candlestick(x=df['Date'], open=df['Open'], high=df['High'],
                                        low=df['Low'], close=df['Close'], name="Prix", hoverinfo="none"))
@@ -1067,6 +1395,25 @@ with tab_ichimoku:
 
 
 with tab_volume:
+    with st.expander("📖 Comment lire le volume et l'OBV", expanded=False):
+        st.markdown("""
+Le volume confirme (ou invalide) tout mouvement de prix. Un mouvement sans volume est suspect.
+
+**OBV (On-Balance Volume)** — bleu : volume cumulé signé (+ si bougie haussière, − si baissière).
+• OBV qui monte alors que le prix stagne = ACCUMULATION discrète (signal d'achat institutionnel).
+• OBV qui baisse alors que le prix stagne = DISTRIBUTION discrète (vendeurs invisibles).
+• Divergence OBV/Prix : si le prix fait un nouveau plus haut sans que l'OBV suive, la hausse est artificielle.
+
+**OBV MA20** — orange : moyenne mobile de l'OBV. L'OBV au-dessus de sa MA = flux acheteur dominant.
+
+**Quote Volume ($)** — barres bleues : volume échangé en dollars sur 24h. Permet de comparer la liquidité réelle entre périodes (mieux que le volume en unités, biaisé par le prix).
+
+**Lecture rapide** :
+• Cassure + volume élevé = mouvement crédible, à suivre.
+• Cassure + volume faible = fakeout probable, attendre confirmation.
+• Volume climax (> 2× la moyenne) après une longue baisse = signal de capitulation, plancher possible.
+        """)
+
     fig_vol = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.05,
                             subplot_titles=("On-Balance Volume (OBV)", "Quote Volume ($)"))
 
@@ -1229,74 +1576,123 @@ f_col3.markdown(f"### 📈 Sensibilité\n{fiche['sensibilite']}")
 # ══════════════════════════════════════════════════════════════════════════════
 
 st.markdown("---")
-st.header("🔍 Résumé Technique Express")
+st.header("🔍 Synthèse Technique")
 
-resume_col1, resume_col2 = st.columns(2)
+# ── SYNTHÈSE GLOBALE : phrase descriptive ──
+nb_bull, nb_bear, nb_neutre = 0, 0, 0
+analyses = {"tendance": [], "momentum": [], "volatilite": [], "force": []}
 
-with resume_col1:
-    st.subheader("Signaux Techniques")
-    signals = []
+# Tendance
+if prix > infos['MA_50']:
+    analyses["tendance"].append(("✅", "Prix > MA50", "soutenu court terme"))
+    nb_bull += 1
+else:
+    analyses["tendance"].append(("🔴", "Prix < MA50", "sous pression court terme"))
+    nb_bear += 1
 
-    # Tendance
-    if prix > infos['MA_50']:
-        signals.append(("Prix > MA50", "Haussier", "✅"))
+if not pd.isna(infos.get('MA_200')):
+    if prix > infos['MA_200']:
+        analyses["tendance"].append(("✅", "Prix > MA200", "régime de fond haussier"))
+        nb_bull += 1
     else:
-        signals.append(("Prix < MA50", "Baissier", "🔴"))
+        analyses["tendance"].append(("🔴", "Prix < MA200", "régime de fond baissier"))
+        nb_bear += 1
+    if infos['MA_50'] > infos['MA_200']:
+        analyses["tendance"].append(("✅", "Golden Cross (MA50 > MA200)", "structure haussière confirmée"))
+        nb_bull += 1
+    else:
+        analyses["tendance"].append(("🔴", "Death Cross (MA50 < MA200)", "structure baissière confirmée"))
+        nb_bear += 1
 
+# Momentum
+if infos['RSI'] < 30:
+    analyses["momentum"].append(("✅", f"RSI {infos['RSI']:.0f}", "survendu, rebond probable"))
+    nb_bull += 1
+elif infos['RSI'] > 70:
+    analyses["momentum"].append(("🔴", f"RSI {infos['RSI']:.0f}", "suracheté, correction probable"))
+    nb_bear += 1
+elif 40 <= infos['RSI'] <= 60:
+    analyses["momentum"].append(("⚪", f"RSI {infos['RSI']:.0f}", "neutre"))
+    nb_neutre += 1
+else:
+    analyses["momentum"].append(("⚪", f"RSI {infos['RSI']:.0f}", "zone intermédiaire"))
+    nb_neutre += 1
+
+if infos['MACD'] > infos['MACD_Signal']:
+    analyses["momentum"].append(("✅", "MACD > Signal", "momentum haussier"))
+    nb_bull += 1
+else:
+    analyses["momentum"].append(("🔴", "MACD < Signal", "momentum baissier"))
+    nb_bear += 1
+
+# Volatilité
+if prix <= infos['BB_Basse']:
+    analyses["volatilite"].append(("✅", "Prix ≤ Bollinger Basse", "excès baissier statistique"))
+    nb_bull += 1
+elif prix >= infos['BB_Haute']:
+    analyses["volatilite"].append(("🔴", "Prix ≥ Bollinger Haute", "excès haussier statistique"))
+    nb_bear += 1
+else:
+    analyses["volatilite"].append(("⚪", "Prix dans les bandes", "volatilité normale"))
+    nb_neutre += 1
+
+# Force tendance
+if infos['ADX'] > 25:
+    if infos['Plus_DI'] > infos['Minus_DI']:
+        analyses["force"].append(("✅", f"ADX {infos['ADX']:.0f}", "tendance haussière forte"))
+        nb_bull += 1
+    else:
+        analyses["force"].append(("🔴", f"ADX {infos['ADX']:.0f}", "tendance baissière forte"))
+        nb_bear += 1
+else:
+    analyses["force"].append(("⚪", f"ADX {infos['ADX']:.0f}", "marché sans direction"))
+    nb_neutre += 1
+
+# Synthèse en une phrase
+total = nb_bull + nb_bear + nb_neutre
+pct_bull = (nb_bull / total) * 100 if total else 0
+if pct_bull >= 65:
+    synthese_emoji, synthese_couleur = "📈", "success"
+    synthese_txt = f"**Configuration majoritairement HAUSSIÈRE** — {nb_bull} signaux verts sur {total} ({pct_bull:.0f}%). Les indicateurs convergent vers un biais acheteur. Aligné avec le setup recommandé : **{nom_setup}**."
+elif pct_bull <= 35:
+    synthese_emoji, synthese_couleur = "📉", "error"
+    synthese_txt = f"**Configuration majoritairement BAISSIÈRE** — {nb_bear} signaux rouges sur {total} ({(nb_bear/total)*100:.0f}%). Les indicateurs convergent vers un biais vendeur. Prudence pour entrer long."
+else:
+    synthese_emoji, synthese_couleur = "↔️", "warning"
+    synthese_txt = f"**Configuration MIXTE** — {nb_bull} haussiers / {nb_bear} baissiers / {nb_neutre} neutres. Aucune conviction nette, marché en transition. Attendre un signal plus tranché ou jouer en taille réduite."
+
+if synthese_couleur == "success":
+    st.success(f"{synthese_emoji} {synthese_txt}")
+elif synthese_couleur == "warning":
+    st.warning(f"{synthese_emoji} {synthese_txt}")
+else:
+    st.error(f"{synthese_emoji} {synthese_txt}")
+
+# ── DÉTAIL PAR CATÉGORIE ──
+syn_col1, syn_col2 = st.columns(2)
+with syn_col1:
+    st.markdown("#### 📊 Tendance")
+    for emoji, label, desc in analyses["tendance"]:
+        st.markdown(f"{emoji} **{label}** — {desc}")
+    st.markdown("#### ⚡ Momentum")
+    for emoji, label, desc in analyses["momentum"]:
+        st.markdown(f"{emoji} **{label}** — {desc}")
+
+with syn_col2:
+    st.markdown("#### 📐 Volatilité & Force")
+    for emoji, label, desc in analyses["volatilite"] + analyses["force"]:
+        st.markdown(f"{emoji} **{label}** — {desc}")
+
+    st.markdown("#### 🎯 Niveaux Clés")
+    st.markdown(f"• **VWAP 20j** : {infos['VWAP_20']:,.2f} $ — support/résistance dynamique")
+    st.markdown(f"• **MA50** : {infos['MA_50']:,.2f} $ — moyenne court/moyen terme")
     if not pd.isna(infos.get('MA_200')):
-        if prix > infos['MA_200']:
-            signals.append(("Prix > MA200", "Haussier", "✅"))
-        else:
-            signals.append(("Prix < MA200", "Baissier", "🔴"))
-
-    # Golden/Death cross
-    if not pd.isna(infos.get('MA_200')) and not pd.isna(infos.get('MA_50')):
-        if infos['MA_50'] > infos['MA_200']:
-            signals.append(("MA50 > MA200", "Golden Cross", "✅"))
-        else:
-            signals.append(("MA50 < MA200", "Death Cross", "🔴"))
-
-    # RSI
-    if infos['RSI'] < 30:
-        signals.append((f"RSI = {infos['RSI']:.0f}", "Survendu", "✅"))
-    elif infos['RSI'] > 70:
-        signals.append((f"RSI = {infos['RSI']:.0f}", "Suracheté", "🔴"))
-    else:
-        signals.append((f"RSI = {infos['RSI']:.0f}", "Neutre", "⚪"))
-
-    # MACD
-    if infos['MACD'] > infos['MACD_Signal']:
-        signals.append(("MACD > Signal", "Haussier", "✅"))
-    else:
-        signals.append(("MACD < Signal", "Baissier", "🔴"))
-
-    # ADX
-    if infos['ADX'] > 25:
-        signals.append((f"ADX = {infos['ADX']:.0f}", "Tendance forte", "✅"))
-    else:
-        signals.append((f"ADX = {infos['ADX']:.0f}", "Range/Faible", "⚪"))
-
-    # Bollinger
-    if prix <= infos['BB_Basse']:
-        signals.append(("Prix ≤ BB Basse", "Survendu statistique", "✅"))
-    elif prix >= infos['BB_Haute']:
-        signals.append(("Prix ≥ BB Haute", "Suracheté statistique", "🔴"))
-
-    for label, interpretation, emoji in signals:
-        st.write(f"{emoji} **{label}** → {interpretation}")
-
-
-with resume_col2:
-    st.subheader("Niveaux Clés")
-    st.write(f"🔹 **VWAP 20j** : {infos['VWAP_20']:,.2f} $")
-    st.write(f"🔹 **BB Basse** : {infos['BB_Basse']:,.2f} $")
-    st.write(f"🔹 **BB Haute** : {infos['BB_Haute']:,.2f} $")
-    st.write(f"🔹 **MA50** : {infos['MA_50']:,.2f} $")
-    if not pd.isna(infos.get('MA_200')):
-        st.write(f"🔹 **MA200** : {infos['MA_200']:,.2f} $")
-    st.markdown("**Fibonacci :**")
-    for label, level in niveaux_fib.items():
-        st.write(f"  · {label} : {level:,.2f} $")
+        st.markdown(f"• **MA200** : {infos['MA_200']:,.2f} $ — frontière régime")
+    st.markdown(f"• **Bollinger** : {infos['BB_Basse']:,.2f} $ ↔ {infos['BB_Haute']:,.2f} $")
+    if liste_supports:
+        st.markdown(f"• **Support le plus proche** : {liste_supports[-1]:,.2f} $")
+    if liste_resistances:
+        st.markdown(f"• **Résistance la plus proche** : {liste_resistances[-1]:,.2f} $")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # 15. ACTUALITÉS
