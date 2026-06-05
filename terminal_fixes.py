@@ -149,7 +149,9 @@ def apply_macro_guardrail(raw_score, *, btc_change_24h, fng_index,
     if risk_off and high_beta:
         penalty += 2.5
         reasons.append("BTC en risk-off + actif haut bêta : la corrélation prime sur le setup")
-    if extreme_fear:
+    # La peur extrême est hostile aux longs de tendance (breakout/pullback),
+    # MAIS c'est la prémisse même d'un Reversal contrarian -> on ne le pénalise pas.
+    if extreme_fear and setup_type != "reversal":
         penalty += 1.5
         reasons.append(f"Peur extrême (F&G {fng_index}) : contexte hostile aux entrées longues")
     if near_ath and setup_type == "breakout":
