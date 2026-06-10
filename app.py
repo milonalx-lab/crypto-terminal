@@ -307,32 +307,41 @@ def charger_donnees_prix(coingecko_id, ticker_cc=None):
     POURQUOI 730 et plus 365 : il faut ~2 ans de daily pour construire un
     régime WEEKLY fiable (EMA21W) et une MA200 daily complète dès le début.
     ticker_cc : ticker CryptoCompare (ex: 'BTC', 'ETH'). Si None, on tente seulement CoinGecko.
+    v2.1.1 : retourne (df, source) pour pouvoir AVERTIR quand on tourne en mode
+    dégradé (fallback CoinGecko 4j -> MA200/régime daily incalculables).
+    + retry avec pause : les IP Streamlit Cloud sont partagées et CryptoCompare
+    les rate-limite par vagues — un 2e essai passe souvent.
     """
-    # ── Source 1 : CryptoCompare histoday (730 vraies bougies J) ──
+    # ── Source 1 : CryptoCompare histoday (730 vraies bougies J, 2 essais) ──
     if ticker_cc:
-        try:
-            url = (f"https://min-api.cryptocompare.com/data/v2/histoday"
-                   f"?fsym={ticker_cc}&tsym=USD&limit=730")
-            rep = requests.get(url, timeout=12).json()
-            data = rep.get('Data', {}).get('Data', [])
-            if data and len(data) >= 200:
-                df = pd.DataFrame(data)
-                df['Date'] = pd.to_datetime(df['time'], unit='s')
-                df = df.rename(columns={
-                    'open': 'Open', 'high': 'High', 'low': 'Low', 'close': 'Close',
-                    'volumefrom': 'Volume', 'volumeto': 'Quote_volume'
-                })
-                df['Trades'] = 0
-                df = df[['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Quote_volume', 'Trades']].copy()
-                for col in ['Open', 'High', 'Low', 'Close', 'Volume', 'Quote_volume']:
-                    df[col] = pd.to_numeric(df[col])
-                # CryptoCompare renvoie des bougies à 0 avant la naissance de l'actif
-                # (ex: HYPE n'existe que depuis fin 2024) -> on les retire.
-                df = df[df['Close'] > 0].copy()
-                if len(df) >= 200:
-                    return df.reset_index(drop=True)
-        except Exception:
-            pass
+        for tentative in range(2):
+            try:
+                url = (f"https://min-api.cryptocompare.com/data/v2/histoday"
+                       f"?fsym={ticker_cc}&tsym=USD&limit=730")
+                rep = requests.get(url, timeout=12).json()
+                if isinstance(rep, dict) and rep.get('Response') == 'Error':
+                    raise RuntimeError(rep.get('Message', 'CryptoCompare error'))
+                data = rep.get('Data', {}).get('Data', [])
+                if data and len(data) >= 200:
+                    df = pd.DataFrame(data)
+                    df['Date'] = pd.to_datetime(df['time'], unit='s')
+                    df = df.rename(columns={
+                        'open': 'Open', 'high': 'High', 'low': 'Low', 'close': 'Close',
+                        'volumefrom': 'Volume', 'volumeto': 'Quote_volume'
+                    })
+                    df['Trades'] = 0
+                    df = df[['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Quote_volume', 'Trades']].copy()
+                    for col in ['Open', 'High', 'Low', 'Close', 'Volume', 'Quote_volume']:
+                        df[col] = pd.to_numeric(df[col])
+                    # CryptoCompare renvoie des bougies à 0 avant la naissance de l'actif
+                    # (ex: HYPE n'existe que depuis fin 2024) -> on les retire.
+                    df = df[df['Close'] > 0].copy()
+                    if len(df) >= 200:
+                        return df.reset_index(drop=True), "cryptocompare"
+                break  # réponse valide mais trop courte -> inutile de réessayer
+            except Exception:
+                import time
+                time.sleep(1.5)
 
     # ── Source 2 : CoinGecko OHLC (fallback, granularité 4j sur 365 jours) ──
     try:
@@ -357,25 +366,64 @@ def charger_donnees_prix(coingecko_id, ticker_cc=None):
         df['Trades'] = 0
         df = df[['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Quote_volume', 'Trades']].copy()
         df = df.drop_duplicates(subset='Date').reset_index(drop=True)
-        return df
+        return df, "coingecko"
     except Exception as e:
         st.error(f"Erreur de chargement des prix ({coingecko_id}) : {e}")
-        return pd.DataFrame()
+        return pd.DataFrame(), "aucune"
 
 
-# ── NOUVEAU v2.1 : prix multi-actifs pour le portefeuille (1 seul appel API) ──
+# ── NOUVEAU v2.1 : prix multi-actifs pour le portefeuille ──
+# Mapping symbole -> id CoinGecko (source de SECOURS si CryptoCompare rate-limite
+# l'IP partagée de Streamlit Cloud — la cause des 'N/A' constatés le 10/06).
+PORTFOLIO_CG_IDS = {
+    "BTC": "bitcoin", "ETH": "ethereum", "SOL": "solana", "HYPE": "hyperliquid",
+    "JUP": "jupiter-exchange-solana", "CRO": "crypto-com-chain", "GRT": "the-graph",
+    "NEAR": "near", "ARB": "arbitrum", "MEME": "memecoin-2", "PENGU": "pudgy-penguins",
+    "GRASS": "grass", "USDC": "usd-coin", "USDT": "tether", "LINK": "chainlink",
+    "AVAX": "avalanche-2", "AAVE": "aave", "POL": "polygon-ecosystem-token",
+    "LDO": "lido-dao", "FET": "fetch-ai", "SUI": "sui",
+}
+
+
 @st.cache_data(ttl=120)
 def charger_prix_portfolio(symbols_tuple):
-    """Prix spot USD de toutes les positions via CryptoCompare pricemulti.
-    Un seul appel réseau pour tout le portefeuille -> rapide, pas de rate-limit.
-    Renvoie {symbole: prix ou None}."""
+    """Prix spot USD de toutes les positions. Double source :
+      1. CryptoCompare pricemulti (1 appel) — AVEC détection du JSON d'erreur :
+         un 'Response: Error' (rate-limit ou symbole inconnu) renvoyait avant
+         un dict vide silencieux -> tout le tableau affichait N/A.
+      2. CoinGecko simple/price (1 appel) pour TOUS les symboles encore manquants.
+    Renvoie {symbole: prix ou None}. Un symbole sans prix sur les 2 sources
+    reste None et est listé comme exclu sous le tableau (jamais de prix inventé)."""
+    out = {s: None for s in symbols_tuple}
+
+    # ── Source 1 : CryptoCompare ──
     try:
         fsyms = ",".join(symbols_tuple)
         url = f"https://min-api.cryptocompare.com/data/pricemulti?fsyms={fsyms}&tsyms=USD"
         rep = requests.get(url, timeout=10).json()
-        return {s: (rep.get(s, {}) or {}).get('USD') for s in symbols_tuple}
+        if isinstance(rep, dict) and rep.get('Response') != 'Error':
+            for s in symbols_tuple:
+                v = rep.get(s)
+                if isinstance(v, dict) and v.get('USD'):
+                    out[s] = float(v['USD'])
     except Exception:
-        return {}
+        pass
+
+    # ── Source 2 : CoinGecko pour les manquants ──
+    manquants = [s for s in symbols_tuple if out[s] is None and s in PORTFOLIO_CG_IDS]
+    if manquants:
+        try:
+            ids = ",".join(PORTFOLIO_CG_IDS[s] for s in manquants)
+            rep = requests.get("https://api.coingecko.com/api/v3/simple/price",
+                               params={"ids": ids, "vs_currencies": "usd"}, timeout=10).json()
+            for s in manquants:
+                v = (rep.get(PORTFOLIO_CG_IDS[s], {}) or {}).get('usd')
+                if v:
+                    out[s] = float(v)
+        except Exception:
+            pass
+
+    return out
 
 
 def charger_portfolio_csv():
@@ -1216,9 +1264,14 @@ choix = st.selectbox("Sélectionne un actif :", list(options_cryptos.keys()))
 symbole_api = options_cryptos[choix]
 fiche = repo_fondamental[choix]
 
-df = charger_donnees_prix(fiche['coingecko_id'], fiche['ticker_news'])
+df, source_px = charger_donnees_prix(fiche['coingecko_id'], fiche['ticker_news'])
 if df.empty:
     st.stop()
+if source_px == "coingecko":
+    st.warning("⚠️ **Mode dégradé** : CryptoCompare indisponible (rate-limit probable de l'IP Streamlit Cloud) — "
+               "fallback CoinGecko en bougies de **4 jours**. Conséquences : MA200 et régime DAILY incalculables, "
+               "pivots/oscillateurs moins fiables. **Ne prends pas de décision d'entrée sur ces données** ; "
+               "recharge la page dans 2-3 minutes pour retrouver le daily complet.")
 
 _d = fetch_hyperliquid_derivs(fiche['index_id'])
 if 'error' not in _d:
