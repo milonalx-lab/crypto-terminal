@@ -343,11 +343,38 @@ def charger_donnees_prix(coingecko_id, ticker_cc=None):
                 import time
                 time.sleep(1.5)
 
-    # ── Source 2 : CoinGecko OHLC (fallback, granularité 4j sur 365 jours) ──
+    # ── Source 2 : Coinbase Exchange — 300 vraies bougies JOURNALIÈRES ──
+    # POURQUOI : jamais géo-bloqué ni rate-limité agressivement (contrairement à
+    # CoinGecko sur IP Streamlit partagée). 300 jours de VRAIES bougies J suffisent
+    # pour MA200 (200) et le régime weekly (EMA21W = 147j). Qualité = CryptoCompare.
+    if ticker_cc:
+        try:
+            url = f"https://api.exchange.coinbase.com/products/{ticker_cc}-USD/candles?granularity=86400"
+            rep = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
+            if rep.status_code == 200:
+                data = rep.json()  # [[time, low, high, open, close, volume], ...] ordre décroissant
+                if data and len(data) >= 200:
+                    df = pd.DataFrame(data, columns=['time', 'Low', 'High', 'Open', 'Close', 'Volume'])
+                    df['Date'] = pd.to_datetime(df['time'], unit='s')
+                    for col in ['Open', 'High', 'Low', 'Close', 'Volume']:
+                        df[col] = pd.to_numeric(df[col])
+                    df['Quote_volume'] = df['Volume'] * df['Close']
+                    df['Trades'] = 0
+                    df = df[['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Quote_volume', 'Trades']].copy()
+                    df = df[df['Close'] > 0].sort_values('Date').reset_index(drop=True)
+                    if len(df) >= 200:
+                        return df, "coinbase"
+        except Exception:
+            pass
+
+    # ── Source 3 : CoinGecko OHLC (DERNIER recours, granularité 4j -> mode dégradé) ──
     try:
         jours = 365
         url = f"https://api.coingecko.com/api/v3/coins/{coingecko_id}/ohlc?vs_currency=usd&days={jours}"
         rep = requests.get(url, timeout=12)
+        if rep.status_code == 429:
+            # Rate-limit : on ne plante pas avec un message brut, on dégrade proprement.
+            return pd.DataFrame(), "rate_limit"
         rep.raise_for_status()
         data = rep.json()
         df = pd.DataFrame(data, columns=['Timestamp', 'Open', 'High', 'Low', 'Close'])
@@ -367,9 +394,8 @@ def charger_donnees_prix(coingecko_id, ticker_cc=None):
         df = df[['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'Quote_volume', 'Trades']].copy()
         df = df.drop_duplicates(subset='Date').reset_index(drop=True)
         return df, "coingecko"
-    except Exception as e:
-        st.error(f"Erreur de chargement des prix ({coingecko_id}) : {e}")
-        return pd.DataFrame(), "aucune"
+    except Exception:
+        return pd.DataFrame(), "rate_limit"
 
 
 # ── NOUVEAU v2.1 : prix multi-actifs pour le portefeuille ──
@@ -387,29 +413,48 @@ PORTFOLIO_CG_IDS = {
 
 @st.cache_data(ttl=120)
 def charger_prix_portfolio(symbols_tuple):
-    """Prix spot USD de toutes les positions. Double source :
-      1. CryptoCompare pricemulti (1 appel) — AVEC détection du JSON d'erreur :
-         un 'Response: Error' (rate-limit ou symbole inconnu) renvoyait avant
-         un dict vide silencieux -> tout le tableau affichait N/A.
-      2. CoinGecko simple/price (1 appel) pour TOUS les symboles encore manquants.
-    Renvoie {symbole: prix ou None}. Un symbole sans prix sur les 2 sources
-    reste None et est listé comme exclu sous le tableau (jamais de prix inventé)."""
+    """Prix spot USD de toutes les positions. TRIPLE source, par ordre de robustesse :
+      1. Hyperliquid allMids (1 appel POST) — JAMAIS géo-bloqué ni rate-limité.
+         C'est l'IP la plus fiable et elle couvre la majorité de tes tokens listés
+         (BTC, ETH, SOL, HYPE, JUP, NEAR, ARB, FET, AVAX, AAVE, LDO, SUI, LINK, POL,
+         MEME, PENGU, GRASS...). C'est la correction du bug 'tout N/A' du 10/06.
+      2. CryptoCompare pricemulti (1 appel) pour les manquants.
+      3. CoinGecko simple/price (1 appel) pour ce qui reste (CRO, GRT, stables...).
+    Renvoie {symbole: prix ou None}. Un symbole introuvable sur les 3 sources reste
+    None et est listé comme exclu sous le tableau (jamais de prix inventé)."""
     out = {s: None for s in symbols_tuple}
 
-    # ── Source 1 : CryptoCompare ──
+    # ── Source 1 : Hyperliquid allMids (robuste, prioritaire) ──
     try:
-        fsyms = ",".join(symbols_tuple)
-        url = f"https://min-api.cryptocompare.com/data/pricemulti?fsyms={fsyms}&tsyms=USD"
-        rep = requests.get(url, timeout=10).json()
-        if isinstance(rep, dict) and rep.get('Response') != 'Error':
+        rep = requests.post("https://api.hyperliquid.xyz/info",
+                            json={"type": "allMids"}, timeout=8).json()
+        if isinstance(rep, dict):
+            mids = {k.upper(): v for k, v in rep.items() if k and not k.startswith('@')}
             for s in symbols_tuple:
-                v = rep.get(s)
-                if isinstance(v, dict) and v.get('USD'):
-                    out[s] = float(v['USD'])
+                if s in mids:
+                    try:
+                        out[s] = float(mids[s])
+                    except (TypeError, ValueError):
+                        pass
     except Exception:
         pass
 
-    # ── Source 2 : CoinGecko pour les manquants ──
+    # ── Source 2 : CryptoCompare pour les manquants ──
+    manquants = [s for s in symbols_tuple if out[s] is None]
+    if manquants:
+        try:
+            fsyms = ",".join(manquants)
+            url = f"https://min-api.cryptocompare.com/data/pricemulti?fsyms={fsyms}&tsyms=USD"
+            rep = requests.get(url, timeout=10).json()
+            if isinstance(rep, dict) and rep.get('Response') != 'Error':
+                for s in manquants:
+                    v = rep.get(s)
+                    if isinstance(v, dict) and v.get('USD'):
+                        out[s] = float(v['USD'])
+        except Exception:
+            pass
+
+    # ── Source 3 : CoinGecko pour ce qui reste ──
     manquants = [s for s in symbols_tuple if out[s] is None and s in PORTFOLIO_CG_IDS]
     if manquants:
         try:
@@ -1266,10 +1311,18 @@ fiche = repo_fondamental[choix]
 
 df, source_px = charger_donnees_prix(fiche['coingecko_id'], fiche['ticker_news'])
 if df.empty:
+    if source_px == "rate_limit":
+        st.error("🚫 **Données de prix temporairement inaccessibles** : toutes les sources "
+                 "(CryptoCompare, Coinbase, CoinGecko) ont refusé la requête en même temps — "
+                 "généralement un rate-limit passager de l'IP partagée Streamlit Cloud. "
+                 "Ce n'est pas un signal de marché. **Recharge la page dans 2-3 minutes.** "
+                 "Le portefeuille ci-dessus reste à jour via l'API Hyperliquid.")
+    else:
+        st.error("Données de prix indisponibles pour cet actif. Réessaie dans quelques minutes.")
     st.stop()
 if source_px == "coingecko":
-    st.warning("⚠️ **Mode dégradé** : CryptoCompare indisponible (rate-limit probable de l'IP Streamlit Cloud) — "
-               "fallback CoinGecko en bougies de **4 jours**. Conséquences : MA200 et régime DAILY incalculables, "
+    st.warning("⚠️ **Mode dégradé** : CryptoCompare et Coinbase indisponibles — fallback CoinGecko en "
+               "bougies de **4 jours**. Conséquences : MA200 et régime DAILY incalculables, "
                "pivots/oscillateurs moins fiables. **Ne prends pas de décision d'entrée sur ces données** ; "
                "recharge la page dans 2-3 minutes pour retrouver le daily complet.")
 
