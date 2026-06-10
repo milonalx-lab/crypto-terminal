@@ -1,0 +1,15 @@
+crypto,quantite,avg_buy,dead_line,stop_loss,take_profit,statut,note
+BTC,0.03138,63233,58000,55000,95000,Core,Achat 08/06 - renforcer sur dip tant que >55K
+ETH,1.28451,2593.67,1400,1350,3200,Core,HL 0.584 + Rabby 0.7006 - VERIFIER solde Rabby (fichiers contradictoires)
+SOL,20.534,144.78,52,52,185,Hold cycle,Avg abaisse via DCA 66.5 - break-even lointain
+HYPE,10.41,35.30,48,42,79,Runner,House money - limit vente 79 - reevaluer conviction sous 48-52
+JUP,3694.96,0.5436,0.10,0.10,0.45,Solana DeFi,50% conserve - correle SOL
+CRO,9791.53,0.1018,0.04,0.03,0.18,Moonbag,Accepter perte totale possible
+GRT,3189.01,0.3296,0.013,,0.08,Hold espoir,Narratif AI indexing - TP 0.08 si bull
+NEAR,21.21,1.3174,1.50,,5.5,Hold,+59% latent - TP 5.50
+ARB,779.62,1.7822,,,,Dust,~60$ - ne pas suivre au quotidien
+MEME,10355.06,0.02803,,,,Steaks,Stakeland 1.17M steaks - ne pas vendre
+PENGU,5664,0,,,,Airdrop,Gratuit
+GRASS,50,0,,,,Airdrop,Gratuit
+USDC,554.69,1,,,,Cash,War chest Hyperliquid
+USDT,58.76,0.9994,,,,Cash,
